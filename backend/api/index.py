@@ -1,0 +1,1 @@
+from main import app  # just re-exports your existing app

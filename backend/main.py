@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from config import settings
 from database import engine, Base
 from routes import papers, auth
+from fastapi.staticfiles import StaticFiles
 
 
 # ── Create DB tables on startup ───────────────────────────────
@@ -39,10 +40,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# After all routes are registered, add at the bottom:
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
 # ── Register routes ───────────────────────────────────────────
-app.include_router(papers.router)
-app.include_router(auth.router)
+app.include_router(papers.router, prefix="/api")
+app.include_router(auth.router, prefix="/api")
 
 
 # ── Health check ─────────────────────────────────────────────

@@ -24,7 +24,8 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: str = "*"    # comma separated, e.g. "https://yoursite.com"
 
     class Config:
-        env_file = ".env"         # reads from .env file automatically
+        env_file = ".env",         # reads from .env file automatically
+        extra = "ignore"
 
 
 # Single instance — import this everywhere
