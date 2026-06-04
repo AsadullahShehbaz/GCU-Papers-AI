@@ -1,18 +1,18 @@
 # ============================================================
 # github.py — GitHub file upload service
-# Uploads PDF bytes to your GitHub repo via GitHub API
-# Returns the public raw URL of the uploaded file
 # ============================================================
 
 import base64
+import logging
+
 import httpx
+
 from config import settings
 
+logger = logging.getLogger("gcul_api.github")   # child of root logger in main.py
 
-# GitHub API base
 GITHUB_API = "https://api.github.com"
 
-# Auth headers — reused for every request
 HEADERS = {
     "Authorization": f"Bearer {settings.GITHUB_TOKEN}",
     "Accept":        "application/vnd.github+json",
@@ -21,49 +21,95 @@ HEADERS = {
 
 
 def build_file_path(filename: str) -> str:
-    """Build path inside repo: pdf/filename.pdf"""
-    return f"{settings.GITHUB_PDF_FOLDER}/{filename}"
+    path = f"{settings.GITHUB_PDF_FOLDER}/{filename}"
+    logger.debug("GITHUB | build_file_path → '%s'", path)
+    return path
 
 
 def build_raw_url(filename: str) -> str:
-    """Build public raw URL to access the PDF."""
-    return (
+    url = (
         f"https://raw.githubusercontent.com/"
         f"{settings.GITHUB_REPO_OWNER}/{settings.GITHUB_REPO_NAME}/"
         f"{settings.GITHUB_BRANCH}/{settings.GITHUB_PDF_FOLDER}/{filename}"
     )
+    logger.debug("GITHUB | build_raw_url → %s", url)
+    return url
 
 
 async def upload_pdf_to_github(filename: str, file_bytes: bytes) -> str:
     """
     Upload a PDF file to GitHub repo.
-
-    Args:
-        filename:   clean filename e.g. "dsa_sem3_2024.pdf"
-        file_bytes: raw bytes of the PDF
-
-    Returns:
-        Public raw URL of the uploaded file
-
-    Raises:
-        Exception if upload fails
+    Returns the public raw URL of the uploaded file.
     """
-    file_path = build_file_path(filename)
-    api_url   = f"{GITHUB_API}/repos/{settings.GITHUB_REPO_OWNER}/{settings.GITHUB_REPO_NAME}/contents/{file_path}"
+    size_kb    = len(file_bytes) / 1024
+    file_path  = build_file_path(filename)
+    api_url    = (
+        f"{GITHUB_API}/repos/{settings.GITHUB_REPO_OWNER}/"
+        f"{settings.GITHUB_REPO_NAME}/contents/{file_path}"
+    )
 
-    # GitHub requires base64 encoded content
+    logger.info(
+        "GITHUB | START  filename='%s'  size=%.1f KB  repo=%s/%s  branch=%s",
+        filename, size_kb,
+        settings.GITHUB_REPO_OWNER, settings.GITHUB_REPO_NAME,
+        settings.GITHUB_BRANCH,
+    )
+    logger.debug("GITHUB | PUT %s", api_url)
+
+    # Encode — log timing so you can spot slow base64 on large files
     encoded_content = base64.b64encode(file_bytes).decode("utf-8")
+    logger.debug("GITHUB | base64 encoded → %d chars", len(encoded_content))
 
     payload = {
-        "message": f"Add paper: {filename}",   # commit message
+        "message": f"Add paper: {filename}",
         "content": encoded_content,
         "branch":  settings.GITHUB_BRANCH,
     }
 
-    async with httpx.AsyncClient() as client:
-        response = await client.put(api_url, json=payload, headers=HEADERS)
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            logger.info("GITHUB | Sending PUT request to GitHub API...")
+            response = await client.put(api_url, json=payload, headers=HEADERS)
+    except httpx.TimeoutException:
+        logger.error(
+            "GITHUB | Request timed out after 30s  (filename='%s')", filename
+        )
+        raise Exception(f"GitHub upload timed out for '{filename}'.")
+    except httpx.RequestError as exc:
+        logger.error(
+            "GITHUB | Network error during upload  (filename='%s')  error=%s",
+            filename, exc,
+        )
+        raise Exception(f"GitHub network error: {exc}")
+
+    logger.debug(
+        "GITHUB | Response  status=%d  headers=%s",
+        response.status_code,
+        dict(response.headers),
+    )
+
+    # 422 means the file already exists in the repo
+    if response.status_code == 422:
+        logger.warning(
+            "GITHUB | File already exists in repo  (filename='%s') — skipping upload",
+            filename,
+        )
+        raw_url = build_raw_url(filename)
+        logger.info("GITHUB | Returning existing URL → %s", raw_url)
+        return raw_url
 
     if response.status_code not in (200, 201):
-        raise Exception(f"GitHub upload failed: {response.status_code} — {response.text}")
+        logger.error(
+            "GITHUB | Upload failed  status=%d  filename='%s'  response=%s",
+            response.status_code, filename, response.text[:300],   # cap at 300 chars
+        )
+        raise Exception(
+            f"GitHub upload failed: {response.status_code} — {response.text}"
+        )
 
-    return build_raw_url(filename)
+    raw_url = build_raw_url(filename)
+    logger.info(
+        "GITHUB | DONE ✓  filename='%s'  status=%d  url=%s",
+        filename, response.status_code, raw_url,
+    )
+    return raw_url
