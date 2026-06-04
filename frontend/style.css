@@ -20,17 +20,17 @@
   --transition:  .2s ease;
 }
 
-/* Light mode — just override tokens */
+/* Light mode — optimized for clean separation */
 body.light {
-  --bg:          #f5f5f5;
-  --surface:     #ffffff;
-  --border:      #e0e0e0;
-  --topbar:      #dedeeb;
-  --border-hover:#10a37f44;
-  --text:        #111111;
-  --muted:       #666666;
-  --accent:      #10a37f;
-  --accent-dim:  rgba(16,163,127,.1);
+  --bg:           #f8f9fa;       /* Slightly softer gray for content contrast */
+  --surface:      #ffffff;       /* Pure white for individual cards */
+  --border:       #e2e8f0;       /* Crisp, subtle line breaks */
+  --topbar:       #f1f5f9;       /* Distinct shade for headers */
+  --border-hover: #10a37f55;
+  --text:         #0f172a;       /* Deep slate for high text readability */
+  --muted:        #64748b;       /* Accessible muted gray */
+  --accent:       #10a37f;
+  --accent-dim:   rgba(16,163,127,.08);
 }
 /* ============================================================
    RESET & BASE
@@ -265,7 +265,7 @@ body {
 }
 
 .btn:hover    { opacity: .85; }
-.btn-view     { background: #1e1e1e; color: var(--text); border: 1px solid var(--border); }
+.btn-view     { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
 .btn-download { background: var(--accent); color: #fff; }
 .btn-upload   { background: var(--accent); color: #fff; padding: 9px 18px; border-radius: 50px; flex: none; font-size: 13px; }
 .btn-outline  { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 8px 14px; border-radius: 50px; flex: none; font-size: 13px; }
@@ -350,7 +350,7 @@ body {
 
 .upload-form input,
 .upload-form select {
-  background: #1a1a1a;
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text);
