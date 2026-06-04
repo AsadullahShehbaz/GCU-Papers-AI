@@ -12,7 +12,7 @@ from google.auth.transport import requests as google_requests
 
 from config import settings
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(tags=["auth"])
 logger = logging.getLogger("gcul_api.auth")   # child of root logger in main.py
 
 
