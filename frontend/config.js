@@ -8,7 +8,7 @@ const CONFIG = {
   API_URL: "https://gculpapersai.vercel.app/",
 
   // Your Google OAuth Client ID
-  GOOGLE_CLIENT_ID: "your-client-id.apps.googleusercontent.com",
+  GOOGLE_CLIENT_ID: "636727255190-jebjospo4suh9d1v9i0bppbocelnsm49.apps.googleusercontent.com",
 
   // PDF viewer — using PDF.js
   pdfViewer: (url) =>
