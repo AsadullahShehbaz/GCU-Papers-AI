@@ -128,15 +128,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Static frontend ───────────────────────────────────────────
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+
 
 # ── Routes ────────────────────────────────────────────────────
 app.include_router(papers.router, prefix="/api/papers")
 app.include_router(auth.router,   prefix="/api/auth")
 logger.info("APP | Routers registered: /api/papers, /api/auth")
 
-
+# ── Static frontend ───────────────────────────────────────────
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 # ── Health check ──────────────────────────────────────────────
 @app.get("/health")
 async def health():
