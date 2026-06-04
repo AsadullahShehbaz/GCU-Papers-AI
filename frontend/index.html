@@ -8,9 +8,10 @@
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Google Identity Services (for login) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -45,11 +46,16 @@
       <!-- Topbar -->
       <nav class="topbar">
         <div class="topbar-logo">🎓 GCUL BSCS Papers</div>
+
         <div class="topbar-links">
           <a href="#">Home</a>
           <a href="#">Papers</a>
-          <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLSeq7TWEACE-MM3ygQIivQnmzA0lIj3M50cFX8qY-OZixLowgA/viewform?usp=publish-editor">Contribute</a>
+          <a href="https://forms.gle/YOUR_FORM_ID" target="_blank">Contribute</a>
+        </div>
+
+        <!-- Google Login Button renders here -->
+        <div id="authSection">
+          <div id="googleBtn"></div>
         </div>
       </nav>
 
@@ -85,6 +91,7 @@
           <option value="BSIT">BSIT</option>
           <option value="BSAI">BSAI</option>
         </select>
+
         <span id="resultCount"></span>
       </div>
 
@@ -96,7 +103,7 @@
       <footer>Made with ❤️ for GCUL BSCS students</footer>
     </div>
 
-  </div><!-- /.app -->
+  </div>
 
   <!-- ═══ PDF MODAL ═══ -->
   <div class="modal-overlay" id="pdfModal">
@@ -109,7 +116,81 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
-</body>
+  <!-- ═══ UPLOAD MODAL ═══ -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal-box modal-box--form">
 
+      <div class="modal-header">
+        <span>Upload a Paper</span>
+        <button class="modal-close" onclick="closeUploadModal()">✕</button>
+      </div>
+
+      <form id="uploadForm" class="upload-form">
+
+        <div class="form-row">
+          <label>Subject Name
+            <input type="text" name="subject" placeholder="e.g. Computer Networks" required>
+          </label>
+        </div>
+
+        <div class="form-row form-row--2col">
+          <label>Semester
+            <select name="semester" required>
+              <option value="">Select</option>
+              <option value="1">1</option><option value="2">2</option>
+              <option value="3">3</option><option value="4">4</option>
+              <option value="5">5</option><option value="6">6</option>
+              <option value="7">7</option><option value="8">8</option>
+            </select>
+          </label>
+
+          <label>Year
+            <input type="number" name="year" placeholder="2024" min="2000" max="2099" required>
+          </label>
+        </div>
+
+        <div class="form-row form-row--2col">
+          <label>Paper Type
+            <select name="type" required>
+              <option value="">Select</option>
+              <option value="Mid Term">Mid Term</option>
+              <option value="Final Term">Final Term</option>
+            </select>
+          </label>
+
+          <label>Department
+            <select name="department" required>
+              <option value="">Select</option>
+              <option value="BSCS">BSCS</option>
+              <option value="BSSE">BSSE</option>
+              <option value="BSIT">BSIT</option>
+              <option value="BSAI">BSAI</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label>PDF File (max 10MB)
+            <input type="file" name="pdfFile" accept=".pdf" required>
+          </label>
+        </div>
+
+        <p id="uploadStatus" class="upload-status"></p>
+
+        <button type="submit" class="btn btn-download" style="width:100%; padding:14px;">
+          Upload Paper
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Scripts — order matters -->
+  <script src="config.js"></script>
+  <script src="auth.js"></script>
+  <script src="upload.js"></script>
+  <script src="script.js"></script>
+
+</body>
 </html>

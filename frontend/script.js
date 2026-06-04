@@ -1,72 +1,66 @@
 // ============================================================
-// CONFIG — tweak global behaviour here
+// script.js — Main App
+// Fetches papers from backend API instead of data.json
+// Depends on: config.js
 // ============================================================
-const CONFIG = {
-  dataUrl: "data.json",
-  pdfViewer: (url) => `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(url)}`,
-};
 
-// ============================================================
-// STATE
-// ============================================================
+// ── State ─────────────────────────────────────────────────────
 let allPapers = [];
 
-// ============================================================
-// DOM REFS — grab once, reuse everywhere
-// ============================================================
+// ── DOM Refs — queried once, reused everywhere ─────────────────
 const dom = {
-  grid:           () => document.getElementById("papersGrid"),
-  search:         () => document.getElementById("searchInput"),
-  semFilter:      () => document.getElementById("semesterFilter"),
-  modal:          () => document.getElementById("pdfModal"),
-  viewer:         () => document.getElementById("pdfViewer"),
-  modalTitle:     () => document.getElementById("pdfTitle"),
-  closeBtn:       () => document.getElementById("closeModal"),
-  statPapers:     () => document.getElementById("statPapers"),
-  statSubjects:   () => document.getElementById("statSubjects"),
-  statSemesters:  () => document.getElementById("statSemesters"),
-  resultCount:    () => document.getElementById("resultCount"),
-  deptFilter: () => document.getElementById("deptFilter"),
+  grid:        document.getElementById("papersGrid"),
+  search:      document.getElementById("searchInput"),
+  semFilter:   document.getElementById("semesterFilter"),
+  deptFilter:  document.getElementById("deptFilter"),
+  resultCount: document.getElementById("resultCount"),
+  statPapers:     document.getElementById("statPapers"),
+  statSubjects:   document.getElementById("statSubjects"),
+  statSemesters:  document.getElementById("statSemesters"),
+  modal:       document.getElementById("pdfModal"),
+  viewer:      document.getElementById("pdfViewer"),
+  modalTitle:  document.getElementById("pdfTitle"),
+  closeBtn:    document.getElementById("closeModal"),
 };
 
-// ============================================================
-// DATA
-// ============================================================
+// ── Load Papers from API ──────────────────────────────────────
 async function loadPapers() {
+  dom.grid.innerHTML = `<p class="state-msg">Loading papers…</p>`;
+
   try {
-    const res = await fetch(CONFIG.dataUrl);
-    if (!res.ok) throw new Error("Network error");
+    const res = await fetch(`${CONFIG.API_URL}/papers/`);
+    if (!res.ok) throw new Error("Failed to load papers");
+
     allPapers = await res.json();
     updateStats(allPapers);
     renderPapers(allPapers);
+
   } catch (err) {
-    dom.grid().innerHTML = `<p class="state-msg">⚠️ Could not load papers. Check your data.json file.</p>`;
+    dom.grid.innerHTML = `<p class="state-msg">⚠️ Could not load papers.</p>`;
     console.error(err);
   }
 }
 
-// ============================================================
-// RENDER
-// ============================================================
+// ── Render ────────────────────────────────────────────────────
 function renderPapers(papers) {
-  dom.resultCount().textContent = `${papers.length} paper${papers.length !== 1 ? "s" : ""}`;
+  dom.resultCount.textContent = `${papers.length} paper${papers.length !== 1 ? "s" : ""}`;
 
   if (!papers.length) {
-    dom.grid().innerHTML = `<p class="state-msg">No papers match your search.</p>`;
+    dom.grid.innerHTML = `<p class="state-msg">No papers match your search.</p>`;
     return;
   }
 
-  // Build all cards in one go — single DOM write
-  dom.grid().innerHTML = papers.map(buildCard).join("");
+  dom.grid.innerHTML = papers.map(buildCard).join("");
 }
 
-// ── Single card template ──────────────────────────────────────
+// ── Card Template ─────────────────────────────────────────────
 function buildCard(p) {
   return `
     <article class="paper-card" data-id="${p.id}">
       <div class="card-top">
         <span class="badge">Sem ${p.semester}</span>
         <span class="badge badge-year">${p.year}</span>
+        <span class="badge badge-dept">${p.department}</span>
       </div>
       <h3 class="card-title">${p.subject}</h3>
       <p class="card-type">${p.type}</p>
@@ -77,27 +71,22 @@ function buildCard(p) {
     </article>`;
 }
 
-// Escape single quotes so onclick strings don't break
 function escAttr(str) {
   return str.replace(/'/g, "\\'");
 }
 
-// ============================================================
-// STATS
-// ============================================================
+// ── Stats ─────────────────────────────────────────────────────
 function updateStats(papers) {
-  dom.statPapers().textContent    = papers.length;
-  dom.statSubjects().textContent  = new Set(papers.map(p => p.subject)).size;
-  dom.statSemesters().textContent = new Set(papers.map(p => p.semester)).size;
+  dom.statPapers.textContent    = papers.length;
+  dom.statSubjects.textContent  = new Set(papers.map(p => p.subject)).size;
+  dom.statSemesters.textContent = new Set(papers.map(p => p.semester)).size;
 }
 
-// ============================================================
-// FILTERS — one function, called by both listeners
-// ============================================================
+// ── Filters ───────────────────────────────────────────────────
 function applyFilters() {
-  const query = dom.search().value.toLowerCase().trim();
-  const sem   = dom.semFilter().value;
-  const dept  = document.getElementById("deptFilter").value;
+  const query = dom.search.value.toLowerCase().trim();
+  const sem   = dom.semFilter.value;
+  const dept  = dom.deptFilter.value;
 
   const result = allPapers.filter(p => {
     const matchText = p.subject.toLowerCase().includes(query);
@@ -109,62 +98,38 @@ function applyFilters() {
   renderPapers(result);
 }
 
-dom.search    = memoize(dom.search);   // keep reference stable
-dom.semFilter = memoize(dom.semFilter);
-
-// tiny helper so we don't query DOM on every keystroke
-function memoize(fn) {
-  let cache;
-  return () => cache ?? (cache = fn());
-}
-
-// Attach listeners after DOM ready (called at bottom)
-function attachFilters() {
-  document.getElementById("searchInput")   .addEventListener("input",  applyFilters);
-  document.getElementById("semesterFilter").addEventListener("change", applyFilters);
-  document.getElementById("deptFilter").addEventListener("change", applyFilters);
-}
-
-// ============================================================
-// PDF MODAL
-// ============================================================
+// ── PDF Modal ─────────────────────────────────────────────────
 function openPDF(url, title) {
-  dom.modalTitle().textContent = title;
-  dom.viewer().src = CONFIG.pdfViewer(url);
-  dom.modal().classList.add("active");
+  dom.modalTitle.textContent = title;
+  dom.viewer.src = CONFIG.pdfViewer(url);
+  dom.modal.classList.add("active");
   document.body.style.overflow = "hidden";
 }
 
 function closeModal() {
-  dom.modal().classList.remove("active");
-  dom.viewer().src = "";
+  dom.modal.classList.remove("active");
+  dom.viewer.src = "";
   document.body.style.overflow = "";
 }
 
 function downloadPDF(url, title) {
-  const a = Object.assign(document.createElement("a"), {
+  Object.assign(document.createElement("a"), {
     href: url, download: title || "paper", target: "_blank",
-  });
-  a.click();
+  }).click();
 }
 
-// ============================================================
-// MODAL EVENT LISTENERS
-// ============================================================
-function attachModal() {
-  dom.closeBtn().addEventListener("click", closeModal);
-  dom.modal().addEventListener("click", e => { if (e.target === dom.modal()) closeModal(); });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
-  
+// ── Event Listeners ───────────────────────────────────────────
+function attachListeners() {
+  dom.search   .addEventListener("input",  applyFilters);
+  dom.semFilter.addEventListener("change", applyFilters);
+  dom.deptFilter.addEventListener("change", applyFilters);
+  dom.closeBtn .addEventListener("click",  closeModal);
+  dom.modal    .addEventListener("click",  e => { if (e.target === dom.modal) closeModal(); });
+  document     .addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 }
 
-// ============================================================
-// INIT
-// ============================================================
-function init() {
-  attachFilters();
-  attachModal();
+// ── Init ──────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  attachListeners();
   loadPapers();
-}
-
-init();
+});
