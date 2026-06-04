@@ -132,8 +132,8 @@ app.add_middleware(
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
 # ── Routes ────────────────────────────────────────────────────
-app.include_router(papers.router, prefix="/api")
-app.include_router(auth.router, prefix="/api")
+app.include_router(papers.router, prefix="/api/papers")
+app.include_router(auth.router,   prefix="/api/auth")
 logger.info("APP | Routers registered: /api/papers, /api/auth")
 
 
