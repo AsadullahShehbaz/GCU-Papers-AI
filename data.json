@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "subject": "Data Structures & Algorithms",
+    "semester": 3,
+    "year": 2024,
+    "type": "Final Term",
+    "pdf": "https://raw.githubusercontent.com/AsadullahShehbaz/GCUL-Past-Paperes-and-Notes/main/Data%20Structures%20%26%20Algorithms.pdf"
+  },
+  {
+    "id": 2,
+    "subject": "Database Systems",
+    "semester": 4,
+    "year": 2023,
+    "type": "Final Term",
+    "pdf": "https://raw.githubusercontent.com/AsadullahShehbaz/GCUL-Past-Paperes-and-Notes/main/Database%20Systems.pdf"
+  },
+  {
+    "id": 3,
+    "subject": "Operating Systems",
+    "semester": 5,
+    "year": 2024,
+    "type": "Final Term",
+    "pdf": "https://raw.githubusercontent.com/username/repo/main/os.pdf"
+  }
+]
