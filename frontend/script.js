@@ -28,7 +28,7 @@ async function loadPapers() {
   dom.grid.innerHTML = `<p class="state-msg">Loading papers…</p>`;
 
   try {
-    const res = await fetch(`${CONFIG.API_URL}/papers/`);
+    const res = await fetch(`${CONFIG.API_URL}/api/papers/`);
     if (!res.ok) throw new Error("Failed to load papers");
 
     allPapers = await res.json();
