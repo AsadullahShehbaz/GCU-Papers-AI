@@ -36,8 +36,9 @@ async function handleGoogleLogin(response) {
     if (!res.ok) throw new Error("Login failed");
 
     currentUser = await res.json();   // { email, name, picture }
-
+    localStorage.setItem("gcul_user", JSON.stringify(currentUser)); // ← add this
     onLoginSuccess(currentUser);
+
 
   } catch (err) {
     console.error("Login error:", err);
@@ -49,6 +50,7 @@ async function handleGoogleLogin(response) {
 // ── Sign Out ──────────────────────────────────────────────────
 function signOut() {
   google.accounts.id.disableAutoSelect();
+  localStorage.removeItem("gcul_user"); // ← add this
   currentUser = null;
   onLogout();
 }
@@ -88,5 +90,12 @@ function getCurrentUser() {
 }
 
 
-// ── Auto-init when DOM is ready ───────────────────────────────
-document.addEventListener("DOMContentLoaded", initGoogleAuth);
+document.addEventListener("DOMContentLoaded", () => {
+  // Restore user from previous session
+  const saved = localStorage.getItem("gcul_user");
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    onLoginSuccess(currentUser);
+  }
+  initGoogleAuth();
+});
