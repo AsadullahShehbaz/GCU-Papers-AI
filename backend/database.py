@@ -7,16 +7,16 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from config import settings
 
-# asyncpg driver needed: pip install asyncpg
-# Convert postgres:// → postgresql+asyncpg://
-DATABASE_URL = settings.DATABASE_URL.replace(
-    "postgresql://", "postgresql+asyncpg://"
-)
+# Remove ?sslmode=require from URL and pass ssl separately
+DATABASE_URL = settings.DATABASE_URL\
+    .replace("postgresql://", "postgresql+asyncpg://")\
+    .replace("?sslmode=require", "")\
+    .replace("&sslmode=require", "")
 
-# Engine — one instance for the whole app
 engine = create_async_engine(
     DATABASE_URL,
-    echo=False,   # set True to log all SQL (useful for debugging)
+    echo=False,
+    connect_args={"ssl": "require"},  # ← pass ssl this way instead
 )
 
 # Session factory
