@@ -7,11 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from config import settings
 
-# Remove ?sslmode=require from URL and pass ssl separately
 DATABASE_URL = settings.DATABASE_URL\
     .replace("postgresql://", "postgresql+asyncpg://")\
     .replace("?sslmode=require", "")\
-    .replace("&sslmode=require", "")
+    .replace("&sslmode=require", "")\
+    .replace("&channel_binding=require", "")\
+    .replace("?channel_binding=require", "")
 
 engine = create_async_engine(
     DATABASE_URL,
