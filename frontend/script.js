@@ -6,7 +6,9 @@
 
 // ── State ─────────────────────────────────────────────────────
 let allPapers = [];
-
+let allFilteredPapers = [];
+let currentPage = 1;
+const PAPERS_PER_PAGE = 12;
 // ── DOM Refs — queried once, reused everywhere ─────────────────
 const dom = {
   grid:        document.getElementById("papersGrid"),
@@ -21,6 +23,7 @@ const dom = {
   viewer:      document.getElementById("pdfViewer"),
   modalTitle:  document.getElementById("pdfTitle"),
   closeBtn:    document.getElementById("closeModal"),
+  pagination: document.getElementById("pagination"),
 };
 
 // ── Load Papers from API ──────────────────────────────────────
@@ -32,6 +35,7 @@ async function loadPapers() {
     if (!res.ok) throw new Error("Failed to load papers");
 
     allPapers = await res.json();
+    allFilteredPapers = [...allPapers];
     updateStats(allPapers);
     renderPapers(allPapers);
 
@@ -41,18 +45,34 @@ async function loadPapers() {
   }
 }
 
-// ── Render ────────────────────────────────────────────────────
 function renderPapers(papers) {
+  const totalPages = Math.ceil(papers.length / PAPERS_PER_PAGE);
+  const start = (currentPage - 1) * PAPERS_PER_PAGE;
+  const paginated = papers.slice(start, start + PAPERS_PER_PAGE);
+
   dom.resultCount.textContent = `${papers.length} paper${papers.length !== 1 ? "s" : ""}`;
 
   if (!papers.length) {
     dom.grid.innerHTML = `<p class="state-msg">No papers match your search.</p>`;
+    dom.pagination.innerHTML = "";
     return;
   }
 
-  dom.grid.innerHTML = papers.map(buildCard).join("");
+  dom.grid.innerHTML = paginated.map(buildCard).join("");
+
+  // Pagination controls
+  dom.pagination.innerHTML = `
+    <button class="btn btn-view" onclick="changePage(-1)" ${currentPage === 1 ? "disabled" : ""}>← Prev</button>
+    <span style="color:var(--muted); font-size:14px;">Page ${currentPage} of ${totalPages}</span>
+    <button class="btn btn-view" onclick="changePage(1)" ${currentPage === totalPages ? "disabled" : ""}>Next →</button>
+  `;
 }
 
+function changePage(dir) {
+  currentPage += dir;
+  renderPapers(allFilteredPapers);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 // ── Card Template ─────────────────────────────────────────────
 function buildCard(p) {
   return `
@@ -87,13 +107,15 @@ function applyFilters() {
   const query = dom.search.value.toLowerCase().trim();
   const sem   = dom.semFilter.value;
   const dept  = dom.deptFilter.value;
-
+  
   const result = allPapers.filter(p => {
     const matchText = p.subject.toLowerCase().includes(query);
     const matchSem  = !sem  || p.semester.toString() === sem;
     const matchDept = !dept || p.department === dept;
     return matchText && matchSem && matchDept;
   });
+  allFilteredPapers = result;
+  currentPage = 1;        // reset to page 1 on every filter
 
   renderPapers(result);
 }
