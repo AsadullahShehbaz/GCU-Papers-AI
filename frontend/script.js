@@ -9,6 +9,14 @@ let allPapers = [];
 let allFilteredPapers = [];
 let currentPage = 1;
 const PAPERS_PER_PAGE = 12;
+
+// Only run papers logic if grid exists (papers.html only)
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("papersGrid")) {
+    attachListeners();
+    loadPapers();
+  }
+});
 // ── DOM Refs — queried once, reused everywhere ─────────────────
 const dom = {
   grid:        document.getElementById("papersGrid"),
@@ -18,6 +26,7 @@ const dom = {
   resultCount: document.getElementById("resultCount"),
   statPapers:     document.getElementById("statPapers"),
   statSubjects:   document.getElementById("statSubjects"),
+  statDepts:     document.getElementById("statDepts"), 
   statSemesters:  document.getElementById("statSemesters"),
   modal:       document.getElementById("pdfModal"),
   viewer:      document.getElementById("pdfViewer"),
@@ -100,6 +109,7 @@ function updateStats(papers) {
   dom.statPapers.textContent    = papers.length;
   dom.statSubjects.textContent  = new Set(papers.map(p => p.subject)).size;
   dom.statSemesters.textContent = new Set(papers.map(p => p.semester)).size;
+  if (dom.statDepts)     dom.statDepts.textContent     = new Set(papers.map(p => p.department)).size;
 }
 
 // ── Filters ───────────────────────────────────────────────────
