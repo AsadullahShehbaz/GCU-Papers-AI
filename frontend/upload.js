@@ -77,7 +77,7 @@ async function submitUpload(e) {
   formData.append("file",        file);
 
   try {
-    const res = await fetch(`${CONFIG.API_URL}/papers/upload`, {
+    const res = await fetch(`${CONFIG.API_URL}/api/papers/upload`, {
       method: "POST",
       body:   formData,
       // Don't set Content-Type — browser sets it with boundary automatically
