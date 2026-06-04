@@ -4,7 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GCUL Papers AI</title>
+  <meta name="description" content="GCU Lahore past papers for all departments — BSCS, BSSE, BSIT, BSAI and more. Free download.">
+<meta name="keywords" content="GCU Lahore past papers, GCUL papers, BSCS past papers, GCU exam papers">
+<meta name="author" content="GCU Lahore Students">
+
+<!-- Open Graph (for WhatsApp/Facebook preview) -->
+<meta property="og:title" content="GCU Lahore Past Papers">
+<meta property="og:description" content="All GCU Lahore past papers in one place — free download">
+<meta property="og:url" content="https://gculpapersai.vercel.app">
+  <title> GCUL Papers AI</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,7 +31,7 @@
 
     <!-- ═══ SIDEBAR ═══ -->
     <aside class="sidebar">
-      <div class="sidebar-logo">🎓 GCUL Papers</div>
+      <div class="sidebar-logo">📚 GCU Papers</div>
 
       <div class="sidebar-stats">
         <div class="stat-pill">
@@ -45,7 +54,7 @@
 
       <!-- Topbar -->
       <nav class="topbar">
-        <div class="topbar-logo">🎓 GCUL BSCS Papers</div>
+        <div class="topbar-logo">📚 GCU Papers</div>
 
         <div class="topbar-links">
           <a href="#">Home</a>
@@ -61,8 +70,10 @@
 
       <!-- Hero -->
       <section class="hero">
-        <h1>BSCS Past <span>Papers</span></h1>
-        <p>All GCUL past papers in one place — search, view, download.</p>
+       <title>📚 GCU Lahore Past Papers</title>
+
+<h1>GCU Lahore Past <span>Papers</span></h1>
+<p>Past papers for all GCU Lahore departments — search, view, download.</p>
 
         <div class="search-wrap">
           <span class="search-icon">🔍</span>
@@ -85,12 +96,23 @@
         </select>
 
         <select id="deptFilter">
-          <option value="">All Departments</option>
-          <option value="BSCS">BSCS</option>
-          <option value="BSSE">BSSE</option>
-          <option value="BSIT">BSIT</option>
-          <option value="BSAI">BSAI</option>
-        </select>
+        <option value="">All Departments</option>
+        <option value="BSCS">BS Computer Science</option>
+        <option value="BSSE">BS Software Engineering</option>
+        <option value="BSIT">BS Information Technology</option>
+        <option value="BSAI">BS Artificial Intelligence</option>
+        <option value="BSMATH">BS Mathematics</option>
+        <option value="BSPHY">BS Physics</option>
+        <option value="BSCHEM">BS Chemistry</option>
+        <option value="BSECON">BS Economics</option>
+        <option value="BSENG">BS English</option>
+        <option value="BSURDU">BS Urdu</option>
+        <option value="BSISL">BS Islamiyat</option>
+        <option value="BSSTAT">BS Statistics</option>
+        <option value="BSPSYCH">BS Psychology</option>
+        <option value="BBA">BBA</option>
+        <option value="OTHER">Other</option>
+</select>
 
         <span id="resultCount"></span>
       </div>
@@ -100,6 +122,7 @@
         <p class="state-msg">Loading papers…</p>
       </div>
 
+        <div id="pagination" style="display:flex; justify-content:center; align-items:center; gap:16px; padding:20px 0 60px;"></div>
       <footer>Made with ❤️ for GCUL BSCS students</footer>
     </div>
 
