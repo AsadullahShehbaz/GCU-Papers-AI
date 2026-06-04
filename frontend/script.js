@@ -155,3 +155,15 @@ document.addEventListener("DOMContentLoaded", () => {
   attachListeners();
   loadPapers();
 });
+function toggleTheme() {
+  const isLight = document.body.classList.toggle("light");
+  localStorage.setItem("theme", isLight ? "light" : "dark");
+  document.getElementById("themeBtn").textContent = isLight ? "🌙" : "☀️";
+}
+
+// Restore theme on page load
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme === "light") {
+  document.body.classList.add("light");
+  document.getElementById("themeBtn").textContent = "🌙";
+}
