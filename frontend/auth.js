@@ -27,7 +27,7 @@ function initGoogleAuth() {
 async function handleGoogleLogin(response) {
   try {
     // Send token to our backend for verification
-    const res = await fetch(`${CONFIG.API_URL}/auth/google`, {
+    const res = await fetch(`${CONFIG.API_URL}/api/auth/google`, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({ token: response.credential }),
