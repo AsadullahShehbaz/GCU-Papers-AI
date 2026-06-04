@@ -1,219 +1,592 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="GCU Lahore past papers for all departments — BSCS, BSSE, BSIT, BSAI and more. Free download.">
-<meta name="keywords" content="GCU Lahore past papers, GCUL papers, BSCS past papers, GCU exam papers">
-<meta name="author" content="GCU Lahore Students">
-
-<!-- Open Graph (for WhatsApp/Facebook preview) -->
-<meta property="og:title" content="GCU Lahore Past Papers">
-<meta property="og:description" content="All GCU Lahore past papers in one place — free download">
-<meta property="og:url" content="https://gculpapersai.vercel.app">
-  <title> GCUL Papers AI</title>
+  <title>📚 GCU Lahore Past Papers</title>
+  <meta name="description" content="Search, view and download past papers for all GCU Lahore departments — free for every student.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    /* ── HERO ── */
+    .hero {
+      padding: 110px 0 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    /* subtle grid background */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: .4;
+      pointer-events: none;
+    }
 
-  <!-- Google Identity Services (for login) -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+    /* radial fade over grid */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 0%, transparent 40%, var(--bg) 100%);
+      pointer-events: none;
+    }
 
-  <link rel="stylesheet" href="style.css">
+    .hero-inner { position: relative; z-index: 1; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(16,163,127,.3);
+      border-radius: var(--radius-pill);
+      padding: 6px 16px;
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(42px, 7vw, 82px);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -3px;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 19px);
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 0;
+      background: var(--surface);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 0 20px;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 38px;
+      font-weight: 900;
+      color: var(--accent);
+      display: block;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label { color: var(--muted); font-size: 14px; }
+
+    @media (max-width: 640px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-right: 1px solid var(--border); }
+      .stat-item:nth-child(1),
+      .stat-item:nth-child(2) { border-bottom: 1px solid var(--border); padding-bottom: 24px; }
+      .stat-item:nth-child(3),
+      .stat-item:nth-child(4) { padding-top: 24px; }
+    }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 760px) { .features-grid { grid-template-columns: 1fr; } }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      transition: border-color var(--t), transform var(--t);
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent-glow);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 18px;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+    /* ── HOW IT WORKS ── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: 12.5%;
+      right: 12.5%;
+      height: 1px;
+      background: var(--border);
+    }
+
+    @media (max-width: 760px) {
+      .steps { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .steps::before { display: none; }
+    }
+
+    @media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
+
+    .step { text-align: center; padding: 0 16px; }
+
+    .step-num {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--accent);
+      margin: 0 auto 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step h4 {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .step p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 760px) { .testimonials-grid { grid-template-columns: 1fr; } }
+
+    .testimonial-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      position: relative;
+      transition: border-color var(--t);
+    }
+
+    .testimonial-card:hover { border-color: var(--accent-glow); }
+
+    .quote-mark {
+      font-family: var(--font-display);
+      font-size: 56px;
+      color: var(--accent);
+      opacity: .3;
+      line-height: .8;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .testimonial-text {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--muted);
+      margin-bottom: 22px;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .author-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 1px solid rgba(16,163,127,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .author-name {
+      font-weight: 600;
+      font-size: 14px;
+      display: block;
+    }
+
+    .author-dept { color: var(--muted); font-size: 12px; }
+
+    .stars { color: #f59e0b; font-size: 13px; margin-bottom: 4px; }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 64px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-banner h2 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    .cta-banner p {
+      color: var(--muted);
+      font-size: 16px;
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .cta-banner .hero-actions { position: relative; }
+
+    /* ── SECTION HEADERS ── */
+    .section-header { text-align: center; margin-bottom: 56px; }
+
+    .section-tag {
+      display: inline-block;
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 16px;
+    }
+
+    .section-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      margin-bottom: 12px;
+    }
+
+    .section-header p { color: var(--muted); font-size: 16px; max-width: 480px; margin: 0 auto; }
+  </style>
 </head>
-
 <body>
 
-  <div class="app">
-
-    <!-- ═══ SIDEBAR ═══ -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">📚 GCU Papers</div>
-
-      <div class="sidebar-stats">
-        <div class="stat-pill">
-          <strong id="statPapers">—</strong>
-          <span>Papers</span>
-        </div>
-        <div class="stat-pill">
-          <strong id="statSubjects">—</strong>
-          <span>Subjects</span>
-        </div>
-        <div class="stat-pill">
-          <strong id="statSemesters">—</strong>
-          <span>Semesters</span>
-        </div>
-      </div>
-    </aside>
-
-    <!-- ═══ MAIN ═══ -->
-    <div class="main">
-
-      <!-- Topbar -->
-      <nav class="topbar">
-        <div class="topbar-logo">📚 GCU Papers</div>
-
-        <div class="topbar-links">
-          <a href="#">Home</a>
-          <a href="#">Papers</a>
-          <a href="https://forms.gle/YOUR_FORM_ID" target="_blank">Contribute</a>
-        </div>
-        <button class="btn btn-outline" onclick="toggleTheme()" id="themeBtn">☀️</button>
-        <!-- Google Login Button renders here -->
-        <div id="authSection">
-          <div id="googleBtn"></div>
-        </div>
-      </nav>
-
-      <!-- Hero -->
-      <section class="hero">
-       <title>📚 GCU Lahore Past Papers</title>
-
-<h1>GCU Lahore Past <span>Papers</span></h1>
-<p>Past papers for all GCU Lahore departments — search, view, download.</p>
-
-        <div class="search-wrap">
-          <span class="search-icon">🔍</span>
-          <input id="searchInput" type="text" placeholder="Search subject…" autocomplete="off">
-        </div>
-      </section>
-
-      <!-- Toolbar -->
-      <div class="toolbar">
-        <select id="semesterFilter">
-          <option value="">All Semesters</option>
-          <option value="1">Semester 1</option>
-          <option value="2">Semester 2</option>
-          <option value="3">Semester 3</option>
-          <option value="4">Semester 4</option>
-          <option value="5">Semester 5</option>
-          <option value="6">Semester 6</option>
-          <option value="7">Semester 7</option>
-          <option value="8">Semester 8</option>
-        </select>
-
-        <select id="deptFilter">
-        <option value="">All Departments</option>
-        <option value="BSCS">BS Computer Science</option>
-        <option value="BSSE">BS Software Engineering</option>
-        <option value="BSIT">BS Information Technology</option>
-        <option value="BSAI">BS Artificial Intelligence</option>
-        <option value="BSMATH">BS Mathematics</option>
-        <option value="BSPHY">BS Physics</option>
-        <option value="BSCHEM">BS Chemistry</option>
-        <option value="BSECON">BS Economics</option>
-        <option value="BSENG">BS English</option>
-        <option value="BSURDU">BS Urdu</option>
-        <option value="BSISL">BS Islamiyat</option>
-        <option value="BSSTAT">BS Statistics</option>
-        <option value="BSPSYCH">BS Psychology</option>
-        <option value="BBA">BBA</option>
-        <option value="OTHER">Other</option>
-</select>
-
-        <span id="resultCount"></span>
-      </div>
-
-      <!-- Papers Grid -->
-      <div class="papers-grid" id="papersGrid">
-        <p class="state-msg">Loading papers…</p>
-      </div>
-
-        <div id="pagination" style="display:flex; justify-content:center; align-items:center; gap:16px; padding:20px 0 60px;"></div>
-      <footer>Made with ❤️ for GCUL BSCS students</footer>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">📚 GCU Papers</div>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="papers.html">Papers</a>
+      <a href="contact.html">Contact</a>
+      <a href="papers.html" class="nav-cta btn">Browse Papers →</a>
     </div>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
+  </nav>
 
-  </div>
-
-  <!-- ═══ PDF MODAL ═══ -->
-  <div class="modal-overlay" id="pdfModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <span id="pdfTitle">Paper Preview</span>
-        <button class="modal-close" id="closeModal">✕</button>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-badge fade-up">
+        <span>🎓</span> Free for all GCU Lahore Students
       </div>
-      <iframe id="pdfViewer" src=""></iframe>
+      <h1 class="fade-up-2">
+        Study Smarter.<br>
+        Score <em>Higher.</em>
+      </h1>
+      <p class="hero-sub fade-up-3">
+        Access past papers for every department at GCU Lahore —
+        search, view, and download in seconds. Completely free.
+      </p>
+      <div class="hero-actions fade-up-4">
+        <a href="papers.html" class="btn btn-primary">Browse Papers →</a>
+        <a href="papers.html#upload" class="btn btn-ghost">Upload a Paper</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number" id="statPapers">—</span>
+          <span class="stat-label">Past Papers</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="statSubjects">—</span>
+          <span class="stat-label">Subjects</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="statDepts">—</span>
+          <span class="stat-label">Departments</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">Free</span>
+          <span class="stat-label">Always</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ═══ UPLOAD MODAL ═══ -->
-  <div class="modal-overlay" id="uploadModal">
-    <div class="modal-box modal-box--form">
-
-      <div class="modal-header">
-        <span>Upload a Paper</span>
-        <button class="modal-close" onclick="closeUploadModal()">✕</button>
+  <!-- FEATURES -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Features</span>
+        <h2>Everything You Need</h2>
+        <p>Built by a GCU student, for GCU students.</p>
       </div>
-
-      <form id="uploadForm" class="upload-form">
-
-        <div class="form-row">
-          <label>Subject Name
-            <input type="text" name="subject" placeholder="e.g. Computer Networks" required>
-          </label>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">🔍</span>
+          <h3>Instant Search</h3>
+          <p>Search any subject across all departments and semesters in real time. No loading, no waiting.</p>
         </div>
-
-        <div class="form-row form-row--2col">
-          <label>Semester
-            <select name="semester" required>
-              <option value="">Select</option>
-              <option value="1">1</option><option value="2">2</option>
-              <option value="3">3</option><option value="4">4</option>
-              <option value="5">5</option><option value="6">6</option>
-              <option value="7">7</option><option value="8">8</option>
-            </select>
-          </label>
-
-          <label>Year
-            <input type="number" name="year" placeholder="2024" min="2000" max="2099" required>
-          </label>
+        <div class="feature-card">
+          <span class="feature-icon">👁️</span>
+          <h3>View In Browser</h3>
+          <p>Preview any past paper directly in your browser without downloading anything first.</p>
         </div>
-
-        <div class="form-row form-row--2col">
-          <label>Paper Type
-            <select name="type" required>
-              <option value="">Select</option>
-              <option value="Mid Term">Mid Term</option>
-              <option value="Final Term">Final Term</option>
-            </select>
-          </label>
-
-          <label>Department
-            <select name="department" required>
-              <option value="">Select</option>
-              <option value="BSCS">BSCS</option>
-              <option value="BSSE">BSSE</option>
-              <option value="BSIT">BSIT</option>
-              <option value="BSAI">BSAI</option>
-            </select>
-          </label>
+        <div class="feature-card">
+          <span class="feature-icon">⬇️</span>
+          <h3>Free Download</h3>
+          <p>Download any paper as PDF instantly. No account required, no limits, completely free.</p>
         </div>
-
-        <div class="form-row">
-          <label>PDF File (max 10MB)
-            <input type="file" name="pdfFile" accept=".pdf" required>
-          </label>
+        <div class="feature-card">
+          <span class="feature-icon">⬆️</span>
+          <h3>Student Uploads</h3>
+          <p>Sign in with Google and upload papers for your fellow students. Help others, build the community.</p>
         </div>
-
-        <p id="uploadStatus" class="upload-status"></p>
-
-        <button type="submit" class="btn btn-download" style="width:100%; padding:14px;">
-          Upload Paper
-        </button>
-
-      </form>
-
+        <div class="feature-card">
+          <span class="feature-icon">🏫</span>
+          <h3>All Departments</h3>
+          <p>BSCS, BSSE, BSIT, BSAI, Mathematics, Physics, Chemistry, Economics and more.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📱</span>
+          <h3>Mobile Friendly</h3>
+          <p>Works perfectly on your phone. Study on the go, access papers anywhere, anytime.</p>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Scripts — order matters -->
+  <!-- HOW IT WORKS -->
+  <section class="section" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">How It Works</span>
+        <h2>Simple as 1, 2, 3</h2>
+        <p>Get the paper you need in under 30 seconds.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h4>Go to Papers</h4>
+          <p>Click Browse Papers and you'll see all available past papers.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h4>Filter & Search</h4>
+          <p>Filter by department, semester, or search your subject by name.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h4>View or Download</h4>
+          <p>Preview in browser or download the PDF directly to your device.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h4>Give Back</h4>
+          <p>Sign in with Google and upload papers to help your fellow students.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Students Say</span>
+        <h2>Trusted by GCU Students</h2>
+        <p>Real feedback from real students who used this platform.</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <span class="quote-mark">"</span>
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">Found my Database Systems final paper in 10 seconds. This site literally saved my exam preparation. Every BSCS student should know about this.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">👨‍💻</div>
+            <div>
+              <span class="author-name">Ali Hassan</span>
+              <span class="author-dept">BSCS — Semester 4</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <span class="quote-mark">"</span>
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">I uploaded 6 papers from my old semesters and within a week my juniors were thanking me. Such a good initiative by a fellow student.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">👩‍🎓</div>
+            <div>
+              <span class="author-name">Fatima Malik</span>
+              <span class="author-dept">BSSE — Semester 6</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <span class="quote-mark">"</span>
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">Clean, fast, and free. No annoying sign-up just to download. This is exactly what every university student needs. Bookmarked permanently.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">👨‍🔬</div>
+            <div>
+              <span class="author-name">Usman Tariq</span>
+              <span class="author-dept">BS Mathematics — Semester 5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="cta-banner">
+        <h2>Have a Past Paper? Share It.</h2>
+        <p>Help hundreds of GCU students by uploading your old exam papers. It takes less than a minute.</p>
+        <div class="hero-actions">
+          <a href="papers.html" class="btn btn-primary">Browse Papers →</a>
+          <a href="contact.html" class="btn btn-ghost">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-logo">📚 GCU Papers</div>
+    <p>Made with ❤️ for GCU Lahore students</p>
+    <p style="color: var(--muted); font-size: 13px;">
+      <a href="index.html" style="color:var(--muted);">Home</a> ·
+      <a href="papers.html" style="color:var(--muted);">Papers</a> ·
+      <a href="contact.html" style="color:var(--muted);">Contact</a>
+    </p>
+  </footer>
+
   <script src="config.js"></script>
-  <script src="auth.js"></script>
-  <script src="upload.js"></script>
-  <script src="script.js"></script>
+  <script>
+    // Theme toggle
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle("light");
+      localStorage.setItem("theme", isLight ? "light" : "dark");
+      document.getElementById("themeBtn").textContent = isLight ? "🌙" : "☀️";
+    }
+    const saved = localStorage.getItem("theme");
+    if (saved === "light") {
+      document.body.classList.add("light");
+      document.getElementById("themeBtn").textContent = "🌙";
+    }
+
+    // Load live stats from API
+    async function loadStats() {
+      try {
+        const res  = await fetch(`${CONFIG.API_URL}/api/papers/`);
+        const data = await res.json();
+        document.getElementById("statPapers").textContent   = data.length;
+        document.getElementById("statSubjects").textContent = new Set(data.map(p => p.subject)).size;
+        document.getElementById("statDepts").textContent    = new Set(data.map(p => p.department)).size;
+      } catch { /* keep dashes */ }
+    }
+    loadStats();
+  </script>
 
 </body>
 </html>

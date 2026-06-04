@@ -1,0 +1,180 @@
+/* ============================================================
+   shared.css — tokens + components used across all pages
+   ============================================================ */
+
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+
+/* ── Tokens ── */
+:root {
+  --bg:         #080808;
+  --surface:    #111111;
+  --surface2:   #181818;
+  --border:     #1f1f1f;
+  --text:       #f0f0f0;
+  --muted:      #666666;
+  --accent:     #10a37f;
+  --accent-dim: rgba(16,163,127,.12);
+  --accent-glow:rgba(16,163,127,.25);
+  --danger:     #e53e3e;
+
+  --font-display: 'Poppins', sans-serif;
+  --font-body:    'Poppins', sans-serif;
+
+  --radius-sm:  8px;
+  --radius-md:  14px;
+  --radius-lg:  20px;
+  --radius-pill:50px;
+
+  --ease: cubic-bezier(.16,1,.3,1);
+  --t:    .22s;
+}
+
+/* Light mode */
+body.light {
+  --bg:         #f7f7f5;
+  --surface:    #ffffff;
+  --surface2:   #f0f0ee;
+  --border:     #e5e5e5;
+  --text:       #111111;
+  --muted:      #888888;
+  --accent-dim: rgba(16,163,127,.1);
+}
+
+/* ── Reset ── */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background var(--t), color var(--t);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── NAV ── */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 6%;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: rgba(8,8,8,.85);
+  backdrop-filter: blur(16px);
+  z-index: 100;
+  transition: background var(--t);
+}
+
+body.light .nav { background: rgba(247,247,245,.9); }
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-links a {
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  transition: color var(--t), background var(--t);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--text);
+  background: var(--surface2);
+}
+
+.nav-cta {
+  background: var(--accent) !important;
+  color: #fff !important;
+  padding: 9px 18px !important;
+}
+
+.nav-cta:hover { opacity: .88; }
+
+.theme-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--muted);
+  padding: 7px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color var(--t), color var(--t);
+  margin-left: 4px;
+}
+
+.theme-btn:hover { border-color: var(--accent); color: var(--text); }
+
+@media (max-width: 600px) {
+  .nav-links a:not(.nav-cta) { display: none; }
+}
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity var(--t), transform var(--t);
+}
+
+.btn:hover { opacity: .88; transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn-primary  { background: var(--accent); color: #fff; }
+.btn-ghost    { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-outline  { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-logo { font-family: var(--font-display); font-weight: 800; font-size: 15px; }
+.footer p    { color: var(--muted); font-size: 13px; }
+
+/* ── UTILITIES ── */
+.container { width: 88%; max-width: 1160px; margin: 0 auto; }
+.section   { padding: 90px 0; }
+
+/* fade-up animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up { animation: fadeUp .7s var(--ease) both; }
+.fade-up-2 { animation: fadeUp .7s var(--ease) .12s both; }
+.fade-up-3 { animation: fadeUp .7s var(--ease) .24s both; }
+.fade-up-4 { animation: fadeUp .7s var(--ease) .36s both; }

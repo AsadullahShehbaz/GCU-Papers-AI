@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 Contact — GCU Lahore Papers</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+      padding: 80px 0;
+    }
+
+    @media (max-width: 760px) {
+      .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    /* ── LEFT ── */
+    .contact-left h1 {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      margin-bottom: 18px;
+    }
+
+    .contact-left h1 span { color: var(--accent); }
+
+    .contact-left p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .contact-channels { display: flex; flex-direction: column; gap: 14px; }
+
+    .contact-channel {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      transition: border-color var(--t), transform var(--t);
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .contact-channel:hover { border-color: var(--accent-glow); transform: translateX(4px); }
+
+    .channel-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .channel-label { font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+    .channel-value { font-weight: 600; font-size: 14px; }
+
+    /* ── RIGHT (FORM) ── */
+    .contact-form-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+    }
+
+    .contact-form-wrap h2 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .contact-form-wrap > p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+
+    .form-field { display: flex; flex-direction: column; gap: 7px; }
+
+    .form-field label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color var(--t);
+      width: 100%;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus { border-color: var(--accent); }
+
+    .form-field textarea { resize: vertical; min-height: 120px; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .form-status { font-size: 13px; text-align: center; min-height: 18px; }
+    .form-status.success { color: var(--accent); }
+    .form-status.error   { color: var(--danger); }
+
+    /* ── FAQ ── */
+    .faq-list { display: flex; flex-direction: column; gap: 12px; margin-top: 60px; }
+
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 18px 22px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      transition: color var(--t);
+    }
+
+    .faq-question:hover { color: var(--accent); }
+
+    .faq-arrow { transition: transform var(--t); flex-shrink: 0; }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .3s var(--ease), padding .3s;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      padding: 0 22px;
+    }
+
+    .faq-item.open .faq-answer { max-height: 200px; padding: 0 22px 18px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">📚 GCU Papers</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="papers.html">Papers</a>
+      <a href="contact.html" class="active">Contact</a>
+      <a href="papers.html" class="nav-cta btn">Browse Papers →</a>
+    </div>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
+  </nav>
+
+  <div class="container">
+
+    <div class="contact-layout">
+
+      <!-- LEFT -->
+      <div class="contact-left fade-up">
+        <h1>Let's <span>Connect.</span></h1>
+        <p>
+          Have a question, a suggestion, or want to contribute papers in bulk?
+          Reach out through any of these channels and I'll get back to you.
+        </p>
+
+        <div class="contact-channels">
+          <a href="mailto:asadullahcreative@gmail.com" class="contact-channel">
+            <div class="channel-icon">📧</div>
+            <div>
+              <div class="channel-label">Email</div>
+              <div class="channel-value">asadullahcreative@gmail.com</div>
+            </div>
+          </a>
+
+          <a href="https://github.com/AsadullahShehbaz" target="_blank" class="contact-channel">
+            <div class="channel-icon">🐙</div>
+            <div>
+              <div class="channel-label">GitHub</div>
+              <div class="channel-value">AsadullahShehbaz</div>
+            </div>
+          </a>
+
+          <a href="https://www.linkedin.com/in/asadullahshehbaz" target="_blank" class="contact-channel">
+            <div class="channel-icon">💼</div>
+            <div>
+              <div class="channel-label">LinkedIn</div>
+              <div class="channel-value">Asadullah Shehbaz</div>
+            </div>
+          </a>
+
+          <a href="https://forms.gle/YOUR_FORM_ID" target="_blank" class="contact-channel">
+            <div class="channel-icon">📝</div>
+            <div>
+              <div class="channel-label">Contribute Papers</div>
+              <div class="channel-value">Submit via Google Form</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT (FORM) -->
+      <div class="contact-form-wrap fade-up-2">
+        <h2>Send a Message</h2>
+        <p>I read every message and reply within 24 hours.</p>
+
+        <form class="contact-form" id="contactForm">
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Your Name</label>
+              <input type="text" name="name" placeholder="Ali Hassan" required>
+            </div>
+            <div class="form-field">
+              <label>Department</label>
+              <select name="dept">
+                <option value="">Select (optional)</option>
+                <option>BSCS</option>
+                <option>BSSE</option>
+                <option>BSIT</option>
+                <option>BSAI</option>
+                <option>BS Mathematics</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="you@gmail.com" required>
+          </div>
+
+          <div class="form-field">
+            <label>Subject</label>
+            <select name="subject" required>
+              <option value="">Select topic</option>
+              <option>Report a missing paper</option>
+              <option>Bug or error on site</option>
+              <option>Bulk paper contribution</option>
+              <option>Collaboration</option>
+              <option>General question</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label>Message</label>
+            <textarea name="message" placeholder="Write your message here…" required></textarea>
+          </div>
+
+          <p id="formStatus" class="form-status"></p>
+
+          <button type="submit" class="btn btn-primary" style="justify-content:center; width:100%; padding:14px;">
+            Send Message →
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- FAQ -->
+    <div style="max-width: 700px; margin: 0 auto; padding-bottom: 80px;">
+      <div class="section-header" style="text-align:left; margin-bottom: 32px;">
+        <span class="section-tag">FAQ</span>
+        <h2 style="font-family:var(--font-display); font-size:32px; font-weight:900; letter-spacing:-1px; margin-top:12px;">Common Questions</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Is this platform free to use?
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-answer">Yes, completely free. No account needed to browse or download papers. Sign in with Google only if you want to upload papers.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            How do I upload a paper?
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-answer">Go to the Papers page, sign in with your Google account, and click the "Upload Paper" button. Fill in the subject details and select your PDF file.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            My department is not listed. What should I do?
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-answer">Select "Other" when uploading and mention your department in the subject name. Contact us and we'll add your department to the list.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Can I contribute papers for other universities?
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-answer">Right now this platform is specifically for GCU Lahore students. We may expand to other universities in the future.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            I found a wrong or duplicate paper. How do I report it?
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-answer">Use the contact form above and select "Bug or error on site". Mention the subject name and we'll fix it quickly.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-logo">📚 GCU Papers</div>
+    <p>Made with ❤️ for GCU Lahore students</p>
+    <p>
+      <a href="index.html" style="color:var(--muted);">Home</a> ·
+      <a href="papers.html" style="color:var(--muted);">Papers</a> ·
+      <a href="contact.html" style="color:var(--muted);">Contact</a>
+    </p>
+  </footer>
+
+  <script>
+    // Theme
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle("light");
+      localStorage.setItem("theme", isLight ? "light" : "dark");
+      document.getElementById("themeBtn").textContent = isLight ? "🌙" : "☀️";
+    }
+    const saved = localStorage.getItem("theme");
+    if (saved === "light") {
+      document.body.classList.add("light");
+      document.getElementById("themeBtn").textContent = "🌙";
+    }
+
+    // FAQ accordion
+    function toggleFaq(btn) {
+      const item = btn.closest(".faq-item");
+      item.classList.toggle("open");
+    }
+
+    // Contact form — opens mailto as fallback (no backend needed)
+    document.getElementById("contactForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const data   = new FormData(this);
+      const name   = data.get("name");
+      const email  = data.get("email");
+      const subj   = data.get("subject");
+      const msg    = data.get("message");
+
+      const mailtoLink = `mailto:asadullahcreative@gmail.com?subject=${encodeURIComponent(subj + ' — from ' + name)}&body=${encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + msg)}`;
+
+      window.location.href = mailtoLink;
+
+      const status = document.getElementById("formStatus");
+      status.textContent = "✅ Opening your email client…";
+      status.className = "form-status success";
+    });
+  </script>
+
+</body>
+</html>
