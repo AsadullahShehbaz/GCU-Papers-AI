@@ -16,7 +16,7 @@ from database import get_db
 from models import Paper
 from github import upload_pdf_to_github
 
-router = APIRouter(prefix="/papers", tags=["papers"])
+router = APIRouter(tags=["papers"])
 logger = logging.getLogger("gcul_api.papers")   # child of the root logger in main.py
 
 
