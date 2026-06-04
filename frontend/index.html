@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GCUL BSCS Past Papers</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">🎓 GCUL Papers</div>
+
+      <div class="sidebar-stats">
+        <div class="stat-pill">
+          <strong id="statPapers">—</strong>
+          <span>Papers</span>
+        </div>
+        <div class="stat-pill">
+          <strong id="statSubjects">—</strong>
+          <span>Subjects</span>
+        </div>
+        <div class="stat-pill">
+          <strong id="statSemesters">—</strong>
+          <span>Semesters</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══ MAIN ═══ -->
+    <div class="main">
+
+      <!-- Topbar -->
+      <nav class="topbar">
+        <div class="topbar-logo">🎓 GCUL BSCS Papers</div>
+        <div class="topbar-links">
+          <a href="#">Home</a>
+          <a href="#">Papers</a>
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSeq7TWEACE-MM3ygQIivQnmzA0lIj3M50cFX8qY-OZixLowgA/viewform?usp=publish-editor">Contribute</a>
+        </div>
+      </nav>
+
+      <!-- Hero -->
+      <section class="hero">
+        <h1>BSCS Past <span>Papers</span></h1>
+        <p>All GCUL past papers in one place — search, view, download.</p>
+
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input id="searchInput" type="text" placeholder="Search subject…" autocomplete="off">
+        </div>
+      </section>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <select id="semesterFilter">
+          <option value="">All Semesters</option>
+          <option value="1">Semester 1</option>
+          <option value="2">Semester 2</option>
+          <option value="3">Semester 3</option>
+          <option value="4">Semester 4</option>
+          <option value="5">Semester 5</option>
+          <option value="6">Semester 6</option>
+          <option value="7">Semester 7</option>
+          <option value="8">Semester 8</option>
+        </select>
+
+        <select id="deptFilter">
+          <option value="">All Departments</option>
+          <option value="BSCS">BSCS</option>
+          <option value="BSSE">BSSE</option>
+          <option value="BSIT">BSIT</option>
+          <option value="BSAI">BSAI</option>
+        </select>
+        <span id="resultCount"></span>
+      </div>
+
+      <!-- Papers Grid -->
+      <div class="papers-grid" id="papersGrid">
+        <p class="state-msg">Loading papers…</p>
+      </div>
+
+      <footer>Made with ❤️ for GCUL BSCS students</footer>
+    </div>
+
+  </div><!-- /.app -->
+
+  <!-- ═══ PDF MODAL ═══ -->
+  <div class="modal-overlay" id="pdfModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span id="pdfTitle">Paper Preview</span>
+        <button class="modal-close" id="closeModal">✕</button>
+      </div>
+      <iframe id="pdfViewer" src=""></iframe>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
