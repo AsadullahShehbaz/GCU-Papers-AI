@@ -6,8 +6,8 @@
 import logging
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
-from langchain.schema.output_parser import StrOutputParser
-from langchain.schema.runnable import RunnablePassthrough
+from langchain_core.output_parsers.output_parser import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
 from config import settings
 from rag.vectorstore import search_similar
 
