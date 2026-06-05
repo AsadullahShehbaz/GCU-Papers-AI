@@ -309,6 +309,27 @@
     .user-name { font-size: 14px; color: var(--muted); }
     .btn-upload { background: var(--accent); color: #fff; padding: 9px 18px; border-radius: var(--radius-pill); border: none; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer; }
     .btn-signout { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 8px 14px; border-radius: var(--radius-pill); font-family: var(--font-body); font-size: 13px; cursor: pointer; }
+    .btn-card {
+  flex: 1;
+  padding: 10px 6px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity var(--t), transform var(--t);
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+ 
+.btn-card:hover { opacity: .85; transform: translateY(-1px); }
+.btn-view       { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-download   { background: var(--accent); color: #fff; }
   </style>
 </head>
 <body>

@@ -84,19 +84,40 @@ function changePage(dir) {
 }
 // ── Card Template ─────────────────────────────────────────────
 function buildCard(p) {
+  const safeSubject = encodeURIComponent(p.subject  || "");
+  const safeDept    = encodeURIComponent(p.department || "");
+  const safePdf     = encodeURIComponent(p.pdf      || "");
+ 
+  // Viewer URL — passes all context as query params
+  const viewerUrl =
+    `paper-viewer.html?pdf=${safePdf}&subject=${safeSubject}&dept=${safeDept}&semester=${p.semester || ""}`;
+ 
   return `
     <article class="paper-card" data-id="${p.id}">
+ 
       <div class="card-top">
-        <span class="badge">Sem ${p.semester}</span>
+        <span class="badge badge-sem">Sem ${p.semester}</span>
         <span class="badge badge-year">${p.year}</span>
-        <span class="badge badge-dept">${p.department}</span>
+        <span class="badge badge-dept">${p.department || "—"}</span>
       </div>
+ 
       <h3 class="card-title">${p.subject}</h3>
       <p class="card-type">${p.type}</p>
+ 
       <div class="card-buttons">
-        <button class="btn btn-view"     onclick="openPDF('${p.pdf}','${escAttr(p.subject)}')">View</button>
-        <button class="btn btn-download" onclick="downloadPDF('${p.pdf}','${escAttr(p.subject)}')">Download</button>
+        <a
+          href="${viewerUrl}"
+          target="_blank"
+          class="btn-card btn-view">
+          📖 Open
+        </a>
+        <button
+          class="btn-card btn-download"
+          onclick="downloadPDF('${p.pdf.replace(/'/g,"\\'")}','${p.subject.replace(/'/g,"\\'")}')">
+          ⬇ Download
+        </button>
       </div>
+ 
     </article>`;
 }
 
