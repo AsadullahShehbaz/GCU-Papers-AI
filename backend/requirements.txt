@@ -15,8 +15,9 @@ langchain-groq==1.1.2
 qdrant-client==1.17.1
 
 # Gemini Embeddings
-google-genai
-
+google-api-python-client==2.177.0
+google-auth-httplib2==0.2.0
+google-auth-oauthlib==1.2.1
 # PDF Processing
 pdfplumber==0.11.9
 PyPDF2==3.0.1
