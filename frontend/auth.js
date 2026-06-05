@@ -1,32 +1,35 @@
 // ============================================================
-// auth.js — Google Login
-// Handles sign in, sign out, and current user state
-// Import order in HTML: config.js → auth.js → script.js
+// auth.js — Google Login + Profile Navbar
+// Shows profile name in navbar with hover dropdown for sign out
+// Depends on: config.js
 // ============================================================
 
 // ── State ─────────────────────────────────────────────────────
-let currentUser = null;   // { email, name, picture } or null
+let currentUser = null;
 
-
-// ── Init Google Sign-In button ────────────────────────────────
+// ── Init Google Sign-In ───────────────────────────────────────
 function initGoogleAuth() {
+  if (typeof google === "undefined") return;
+
   google.accounts.id.initialize({
     client_id: CONFIG.GOOGLE_CLIENT_ID,
     callback:  handleGoogleLogin,
   });
 
-  // Render the sign-in button inside #googleBtn div
-  google.accounts.id.renderButton(
-    document.getElementById("googleBtn"),
-    { theme: "filled_black", size: "large", shape: "pill" }
-  );
+  // Render button only if element exists on this page
+  const btn = document.getElementById("googleBtn");
+  if (btn) {
+    google.accounts.id.renderButton(btn, {
+      theme: "filled_black",
+      size:  "large",
+      shape: "pill",
+    });
+  }
 }
 
-
-// ── Called by Google after user clicks Sign In ────────────────
+// ── Handle login response from Google ─────────────────────────
 async function handleGoogleLogin(response) {
   try {
-    // Send token to our backend for verification
     const res = await fetch(`${CONFIG.API_URL}/api/auth/google`, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
@@ -35,67 +38,105 @@ async function handleGoogleLogin(response) {
 
     if (!res.ok) throw new Error("Login failed");
 
-    currentUser = await res.json();   // { email, name, picture }
-    localStorage.setItem("gcul_user", JSON.stringify(currentUser)); // ← add this
-    onLoginSuccess(currentUser);
+    currentUser = await res.json();
+    localStorage.setItem("gcul_user", JSON.stringify(currentUser));
 
+    updateNavProfile(currentUser);
+    if (typeof onLoginSuccess === "function") onLoginSuccess(currentUser);
 
   } catch (err) {
     console.error("Login error:", err);
-    showAuthError("Login failed. Please try again.");
   }
 }
 
-
 // ── Sign Out ──────────────────────────────────────────────────
 function signOut() {
-  google.accounts.id.disableAutoSelect();
-  localStorage.removeItem("gcul_user"); // ← add this
+  if (typeof google !== "undefined") {
+    google.accounts.id.disableAutoSelect();
+  }
   currentUser = null;
-  onLogout();
+  localStorage.removeItem("gcul_user");
+
+  updateNavProfile(null);
+  if (typeof onLogout === "function") onLogout();
 }
 
+// ── Update Navbar Profile UI ──────────────────────────────────
+function updateNavProfile(user) {
+  const authSection = document.getElementById("authSection");
+  if (!authSection) return;
 
-// ── UI updates after login / logout ──────────────────────────
-function onLoginSuccess(user) {
-  // Hide login button, show user info + upload button
-  document.getElementById("authSection").innerHTML = `
-    <div class="user-info">
-      <img src="${user.picture}" alt="${user.name}" class="user-avatar">
-      <span class="user-name">${user.name}</span>
-      <button class="btn btn-outline" onclick="signOut()">Sign Out</button>
-      <button class="btn btn-upload" onclick="openUploadModal()">+ Upload Paper</button>
-    </div>
-  `;
+  if (user) {
+    // First name only — keeps navbar clean
+    const firstName = user.name.split(" ")[0];
+
+    authSection.innerHTML = `
+      <div class="profile-wrap" id="profileWrap">
+        <button class="profile-btn" id="profileBtn">
+          <img
+            src="${user.picture}"
+            alt="${user.name}"
+            class="profile-avatar"
+            onerror="this.style.display='none'"
+          >
+          <span class="profile-name">${firstName}</span>
+          <span class="profile-chevron">▾</span>
+        </button>
+
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="profile-dropdown-header">
+            <img src="${user.picture}" alt="${user.name}" class="dropdown-avatar"
+              onerror="this.style.display='none'">
+            <div>
+              <div class="dropdown-name">${user.name}</div>
+              <div class="dropdown-email">${user.email}</div>
+            </div>
+          </div>
+          <div class="profile-dropdown-divider"></div>
+          <a href="upload.html" class="dropdown-item">⬆️ Upload Paper</a>
+          <a href="papers.html" class="dropdown-item">📚 Browse Papers</a>
+          <div class="profile-dropdown-divider"></div>
+          <button class="dropdown-item dropdown-signout" onclick="signOut()">
+            🚪 Sign Out
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Toggle dropdown on click (mobile-friendly)
+    document.getElementById("profileBtn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      document.getElementById("profileDropdown").classList.toggle("open");
+    });
+
+    // Close on outside click
+    document.addEventListener("click", () => {
+      document.getElementById("profileDropdown")?.classList.remove("open");
+    });
+
+  } else {
+    // Not logged in — show Google button
+    authSection.innerHTML = `<div id="googleBtn"></div>`;
+    initGoogleAuth();
+  }
 }
 
-function onLogout() {
-  // Show login button again
-  document.getElementById("authSection").innerHTML = `
-    <div id="googleBtn"></div>
-  `;
-  initGoogleAuth();
-}
-
-function showAuthError(msg) {
-  document.getElementById("authSection").innerHTML += `
-    <p class="auth-error">${msg}</p>
-  `;
-}
-
-
-// ── Getter — used by upload.js ────────────────────────────────
+// ── Getter — used by upload.js and other modules ──────────────
 function getCurrentUser() {
   return currentUser;
 }
 
-
+// ── Restore session from localStorage ────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-  // Restore user from previous session
   const saved = localStorage.getItem("gcul_user");
   if (saved) {
-    currentUser = JSON.parse(saved);
-    onLoginSuccess(currentUser);
+    try {
+      currentUser = JSON.parse(saved);
+      updateNavProfile(currentUser);
+      if (typeof onLoginSuccess === "function") onLoginSuccess(currentUser);
+    } catch {
+      localStorage.removeItem("gcul_user");
+    }
   }
   initGoogleAuth();
 });

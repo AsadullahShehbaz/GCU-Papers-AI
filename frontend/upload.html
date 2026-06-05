@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 Upload Paper — GCU Lahore</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <link rel="stylesheet" href="shared.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+
+    .upload-page {
+      min-height: calc(100vh - 61px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    @media (max-width: 860px) {
+      .upload-page { grid-template-columns: 1fr; }
+      .upload-left  { display: none; }
+    }
+
+    /* ── LEFT — motivation panel ── */
+    .upload-left {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 60px 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: sticky;
+      top: 61px;
+      height: calc(100vh - 61px);
+      overflow: hidden;
+    }
+
+    /* glowing orb bg */
+    .upload-left::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16,163,127,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .upload-left-inner { position: relative; z-index: 1; }
+
+    .upload-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(16,163,127,.3);
+      border-radius: var(--radius-pill);
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .upload-left h1 {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 3.5vw, 46px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      margin-bottom: 18px;
+    }
+
+    .upload-left h1 em { font-style: normal; color: var(--accent); }
+
+    .upload-left p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+      margin-bottom: 40px;
+      max-width: 380px;
+    }
+
+    /* Impact cards */
+    .impact-cards { display: flex; flex-direction: column; gap: 12px; }
+
+    .impact-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      transition: border-color var(--t);
+    }
+
+    .impact-card:hover { border-color: rgba(16,163,127,.3); }
+
+    .impact-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .impact-card h4 { font-family: var(--font-display); font-size: 14px; font-weight: 800; margin-bottom: 2px; }
+    .impact-card p  { color: var(--muted); font-size: 12px; line-height: 1.4; }
+
+    /* ── RIGHT — form panel ── */
+    .upload-right {
+      padding: 60px 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    @media (max-width: 860px) { .upload-right { padding: 40px 24px; } }
+
+    /* Login gate — shown when not logged in */
+    .login-gate {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .login-gate-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(16,163,127,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 24px;
+    }
+
+    .login-gate h2 {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 10px;
+    }
+
+    .login-gate p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    /* Form */
+    .upload-form-wrap { display: none; }
+    .upload-form-wrap.visible { display: block; }
+
+    .upload-form-wrap h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 6px;
+    }
+
+    .upload-form-wrap > p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 36px;
+    }
+
+    .upload-form { display: flex; flex-direction: column; gap: 20px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 7px; }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .3px;
+    }
+
+    .form-group input,
+    .form-group select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      padding: 13px 16px;
+      outline: none;
+      transition: border-color var(--t), box-shadow var(--t);
+      width: 100%;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 480px) { .form-grid-2 { grid-template-columns: 1fr; } }
+
+    /* File drop zone */
+    .file-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-md);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--t), background var(--t);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .file-zone:hover,
+    .file-zone.drag-over {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .file-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .file-zone-icon { font-size: 32px; margin-bottom: 10px; }
+
+    .file-zone-text {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .file-zone-sub { color: var(--muted); font-size: 12px; }
+
+    .file-selected {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(16,163,127,.3);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .file-selected.visible { display: flex; }
+
+    /* Progress bar */
+    .upload-progress {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .upload-progress.visible { display: flex; }
+
+    .progress-bar-wrap {
+      background: var(--surface2);
+      border-radius: var(--radius-pill);
+      height: 6px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: var(--radius-pill);
+      width: 0%;
+      transition: width .4s var(--ease);
+    }
+
+    .progress-label { font-size: 12px; color: var(--muted); }
+
+    /* Status */
+    .upload-status { font-size: 14px; text-align: center; min-height: 20px; font-weight: 500; }
+    .upload-status.success { color: var(--accent); }
+    .upload-status.error   { color: #e53e3e; }
+    .upload-status.loading { color: var(--muted); }
+
+    /* Success screen */
+    .success-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      padding: 40px 0;
+    }
+
+    .success-screen.visible { display: flex; }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      animation: pop .4s var(--ease);
+    }
+
+    @keyframes pop {
+      0%   { transform: scale(0); }
+      70%  { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    .success-screen h3 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .success-screen p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+ <!-- ═══ UPDATED NAV — paste into index.html, papers.html, contact.html ═══ -->
+<!-- Replace your existing <nav class="nav"> block with this -->
+
+<nav class="nav">
+  <div class="nav-logo">📚 GCU Papers</div>
+
+  <div class="nav-links">
+    <a href="index.html" >Home</a>
+    <a href="papers.html">Papers</a>
+    <a href="upload.html" class="active">Upload</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <div style="display:flex; align-items:center; gap:8px;">
+    <div id="authSection">
+      <div id="googleBtn"></div>
+    </div>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
+  </div>
+</nav>
+
+<!-- Mark the active page by adding class="active" to the matching <a> -->
+<!-- index.html   → <a href="index.html"   class="active"> -->
+<!-- papers.html  → <a href="papers.html"  class="active"> -->
+<!-- upload.html  → <a href="upload.html"  class="active"> -->
+<!-- contact.html → <a href="contact.html" class="active"> -->
+  <div class="upload-page">
+
+    <!-- LEFT -->
+    <div class="upload-left">
+      <div class="upload-left-inner">
+        <div class="upload-tag">🌍 Open Source</div>
+        <h1>Share Knowledge.<br>Help <em>Hundreds.</em></h1>
+        <p>
+          Every paper you upload helps tens of students prepare better.
+          It takes 60 seconds — the impact lasts years.
+        </p>
+        <div class="impact-cards">
+          <div class="impact-card">
+            <div class="impact-icon">📈</div>
+            <div>
+              <h4>Real Impact</h4>
+              <p>Each uploaded paper gets viewed by dozens of students every exam season.</p>
+            </div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-icon">🔒</div>
+            <div>
+              <h4>Safe & Reviewed</h4>
+              <p>Papers are stored securely on GitHub and go live immediately after upload.</p>
+            </div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-icon">🤝</div>
+            <div>
+              <h4>Community Driven</h4>
+              <p>This entire platform is built and maintained by GCU students, for GCU students.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="upload-right">
+
+      <!-- Login Gate — shown when not signed in -->
+      <div class="login-gate" id="loginGate">
+        <div class="login-gate-icon">🔐</div>
+        <h2>Sign In to Contribute</h2>
+        <p>Sign in with your Google account to upload past papers.<br>It's free and takes 5 seconds.</p>
+        <div id="googleBtnGate"></div>
+      </div>
+
+      <!-- Upload Form — shown when signed in -->
+      <div class="upload-form-wrap" id="uploadFormWrap">
+        <h2>Upload a Paper</h2>
+        <p>Fill in the details and select your PDF file.</p>
+
+        <form class="upload-form" id="uploadPageForm">
+
+          <div class="form-group">
+            <label>Subject Name</label>
+            <input type="text" name="subject" placeholder="e.g. Data Structures & Algorithms" required>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Semester</label>
+              <select name="semester" required>
+                <option value="">Select</option>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Year</label>
+              <input type="number" name="year" placeholder="2024" min="2000" max="2099" required>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Paper Type</label>
+              <select name="type" required>
+                <option value="">Select</option>
+                <option value="Mid Term">Mid Term</option>
+                <option value="Final Term">Final Term</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Department</label>
+              <select name="department" required>
+                <option value="">Select</option>
+                <option value="BSCS">BS Computer Science</option>
+                <option value="BSSE">BS Software Engineering</option>
+                <option value="BSIT">BS Information Technology</option>
+                <option value="BSAI">BS Artificial Intelligence</option>
+                <option value="BSMATH">BS Mathematics</option>
+                <option value="BSPHY">BS Physics</option>
+                <option value="BSCHEM">BS Chemistry</option>
+                <option value="BSECON">BS Economics</option>
+                <option value="BSENG">BS English</option>
+                <option value="BSURDU">BS Urdu</option>
+                <option value="BSSTAT">BS Statistics</option>
+                <option value="BSPSYCH">BS Psychology</option>
+                <option value="BBA">BBA</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- File drop zone -->
+          <div class="form-group">
+            <label>PDF File (max 10MB)</label>
+            <div class="file-zone" id="fileZone">
+              <input type="file" name="pdfFile" id="pdfFileInput" accept=".pdf" required>
+              <div class="file-zone-icon">📄</div>
+              <div class="file-zone-text">Click to select or drag & drop</div>
+              <div class="file-zone-sub">PDF only · Max 10MB</div>
+            </div>
+            <div class="file-selected" id="fileSelected">
+              <span>📎</span>
+              <span id="fileName">No file selected</span>
+            </div>
+          </div>
+
+          <!-- Progress -->
+          <div class="upload-progress" id="uploadProgress">
+            <div class="progress-label" id="progressLabel">Uploading…</div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+          </div>
+
+          <p class="upload-status" id="pageUploadStatus"></p>
+
+          <button type="submit" class="btn btn-primary" id="submitBtn" style="width:100%;padding:15px;justify-content:center;font-size:15px;">
+            Upload Paper →
+          </button>
+
+        </form>
+
+        <!-- Success screen -->
+        <div class="success-screen" id="successScreen">
+          <div class="success-icon">✅</div>
+          <h3>Paper Uploaded!</h3>
+          <p>Your paper is now live and available to all GCU students.<br>Thank you for contributing! 🎉</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px;">
+            <a href="papers.html" class="btn btn-primary">Browse Papers</a>
+            <button class="btn btn-ghost" onclick="resetForm()">Upload Another</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo">📚 GCU Papers</div>
+    <p>Made with ❤️ for GCU Lahore students</p>
+    <p>
+      <a href="index.html" style="color:var(--muted);">Home</a> ·
+      <a href="papers.html" style="color:var(--muted);">Papers</a> ·
+      <a href="contact.html" style="color:var(--muted);">Contact</a>
+    </p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    // ── Theme ──────────────────────────────────────────────────
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle("light");
+      localStorage.setItem("theme", isLight ? "light" : "dark");
+      document.getElementById("themeBtn").textContent = isLight ? "🌙" : "☀️";
+    }
+    const saved = localStorage.getItem("theme");
+    if (saved === "light") {
+      document.body.classList.add("light");
+      document.getElementById("themeBtn").textContent = "🌙";
+    }
+
+    // ── Show/hide form based on login state ────────────────────
+    // Called from auth.js after login/logout
+    function onLoginSuccess(user) {
+      document.getElementById("loginGate").style.display    = "none";
+      document.getElementById("uploadFormWrap").classList.add("visible");
+      updateNavProfile(user);
+    }
+
+    function onLogout() {
+      document.getElementById("loginGate").style.display    = "";
+      document.getElementById("uploadFormWrap").classList.remove("visible");
+      document.getElementById("successScreen").classList.remove("visible");
+      document.getElementById("uploadPageForm").style.display = "";
+      updateNavProfile(null);
+      // Re-render Google button
+      google.accounts.id.renderButton(
+        document.getElementById("googleBtnGate"),
+        { theme: "filled_black", size: "large", shape: "pill" }
+      );
+    }
+
+    // Also render login button inside the gate
+    window.addEventListener("load", () => {
+      if (typeof google !== "undefined") {
+        google.accounts.id.renderButton(
+          document.getElementById("googleBtnGate"),
+          { theme: "filled_black", size: "large", shape: "pill" }
+        );
+      }
+    });
+
+    // ── File input — show filename ─────────────────────────────
+    document.getElementById("pdfFileInput").addEventListener("change", function() {
+      const file = this.files[0];
+      if (file) {
+        document.getElementById("fileName").textContent = file.name;
+        document.getElementById("fileSelected").classList.add("visible");
+      }
+    });
+
+    // ── Drag and drop visual ───────────────────────────────────
+    const zone = document.getElementById("fileZone");
+    zone.addEventListener("dragover",  e => { e.preventDefault(); zone.classList.add("drag-over"); });
+    zone.addEventListener("dragleave", ()  => zone.classList.remove("drag-over"));
+    zone.addEventListener("drop",      e  => {
+      e.preventDefault();
+      zone.classList.remove("drag-over");
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        document.getElementById("pdfFileInput").files = e.dataTransfer.files;
+        document.getElementById("fileName").textContent = file.name;
+        document.getElementById("fileSelected").classList.add("visible");
+      }
+    });
+
+    // ── Fake progress bar (upload doesn't stream progress) ────
+    function animateProgress(label) {
+      const fill  = document.getElementById("progressFill");
+      const lbl   = document.getElementById("progressLabel");
+      const prog  = document.getElementById("uploadProgress");
+      prog.classList.add("visible");
+      lbl.textContent = label;
+      let pct = 0;
+      const iv = setInterval(() => {
+        pct = Math.min(pct + Math.random() * 12, 88);
+        fill.style.width = pct + "%";
+      }, 250);
+      return { iv, fill };
+    }
+
+    function finishProgress(bar, success) {
+      clearInterval(bar.iv);
+      bar.fill.style.width = "100%";
+      setTimeout(() => {
+        document.getElementById("uploadProgress").classList.remove("visible");
+        bar.fill.style.width = "0%";
+      }, 600);
+    }
+
+    // ── Form submit ────────────────────────────────────────────
+    document.getElementById("uploadPageForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const user = getCurrentUser();
+      if (!user) { alert("Please sign in first."); return; }
+
+      const data       = new FormData(this);
+      const file       = document.getElementById("pdfFileInput").files[0];
+      const statusEl   = document.getElementById("pageUploadStatus");
+      const submitBtn  = document.getElementById("submitBtn");
+
+      if (!file) { statusEl.textContent = "Please select a PDF file."; statusEl.className = "upload-status error"; return; }
+
+      // Build FormData for API
+      const formData = new FormData();
+      formData.append("subject",     data.get("subject"));
+      formData.append("semester",    data.get("semester"));
+      formData.append("year",        data.get("year"));
+      formData.append("type",        data.get("type"));
+      formData.append("department",  data.get("department"));
+      formData.append("uploaded_by", user.email);
+      formData.append("file",        file);
+
+      submitBtn.disabled    = true;
+      submitBtn.textContent = "Uploading…";
+      statusEl.textContent  = "";
+
+      const bar = animateProgress("Uploading your paper to GitHub…");
+
+      try {
+        const res  = await fetch(`${CONFIG.API_URL}/api/papers/upload`, { method: "POST", body: formData });
+        const json = await res.json();
+
+        finishProgress(bar, true);
+
+        if (!res.ok) throw new Error(json.detail || "Upload failed");
+
+        // Show success screen
+        document.getElementById("uploadPageForm").style.display = "none";
+        document.getElementById("successScreen").classList.add("visible");
+
+      } catch (err) {
+        finishProgress(bar, false);
+        statusEl.textContent  = "❌ " + err.message;
+        statusEl.className    = "upload-status error";
+        submitBtn.disabled    = false;
+        submitBtn.textContent = "Upload Paper →";
+      }
+    });
+
+    // ── Reset form ─────────────────────────────────────────────
+    function resetForm() {
+      document.getElementById("uploadPageForm").reset();
+      document.getElementById("uploadPageForm").style.display   = "";
+      document.getElementById("successScreen").classList.remove("visible");
+      document.getElementById("fileSelected").classList.remove("visible");
+      document.getElementById("pageUploadStatus").textContent   = "";
+      document.getElementById("submitBtn").disabled    = false;
+      document.getElementById("submitBtn").textContent = "Upload Paper →";
+    }
+  </script>
+
+</body>
+</html>

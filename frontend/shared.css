@@ -178,3 +178,159 @@ body.light .nav { background: rgba(247,247,245,.9); }
 .fade-up-2 { animation: fadeUp .7s var(--ease) .12s both; }
 .fade-up-3 { animation: fadeUp .7s var(--ease) .24s both; }
 .fade-up-4 { animation: fadeUp .7s var(--ease) .36s both; }
+
+/* ============================================================
+   ADD THIS TO THE BOTTOM OF shared.css
+   Profile navbar dropdown styles
+   ============================================================ */
+
+/* ── Profile wrap ── */
+.profile-wrap {
+  position: relative;
+}
+
+/* ── Profile button (always visible in navbar) ── */
+.profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px 6px 6px;
+  cursor: pointer;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  transition: border-color var(--t), background var(--t);
+}
+
+.profile-btn:hover {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.profile-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-chevron {
+  color: var(--muted);
+  font-size: 11px;
+  transition: transform var(--t);
+}
+
+/* rotate chevron when open */
+.profile-dropdown.open ~ .profile-btn .profile-chevron,
+.profile-btn:has(+ .profile-dropdown.open) .profile-chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Dropdown panel ── */
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 240px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 48px rgba(0,0,0,.3);
+  overflow: hidden;
+  z-index: 200;
+
+  /* hidden by default */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity var(--t), transform var(--t);
+}
+
+/* show on hover (desktop) */
+.profile-wrap:hover .profile-dropdown,
+.profile-dropdown.open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+/* ── Dropdown header (user info) ── */
+.profile-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+}
+
+.dropdown-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.dropdown-name {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-email {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Divider ── */
+.profile-dropdown-divider {
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Dropdown items ── */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background var(--t), color var(--t);
+}
+
+.dropdown-item:hover {
+  background: var(--surface2);
+}
+
+.dropdown-signout {
+  color: #fc8181;
+}
+
+.dropdown-signout:hover {
+  background: rgba(229,62,62,.08);
+  color: #e53e3e;
+}
