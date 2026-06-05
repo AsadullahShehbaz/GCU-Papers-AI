@@ -19,6 +19,7 @@ class Settings(BaseSettings):
 
     # ── Google OAuth ──
     GOOGLE_CLIENT_ID: str
+    GOOGLE_API_KEY : str
 
     # ── Groq LLM ──
     GROQ_API_KEY: str
