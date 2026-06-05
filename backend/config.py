@@ -1,32 +1,38 @@
 # ============================================================
-# config.py — ALL environment variables live here
-# Change behaviour by editing .env, never touch this file
+# config.py — ALL environment variables
 # ============================================================
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    # --- Neon PostgreSQL ---
+
+    # ── Neon PostgreSQL ──
     DATABASE_URL: str
 
-    # --- GitHub ---
-    GITHUB_TOKEN: str
-    GITHUB_REPO_OWNER: str        # your GitHub username
-    GITHUB_REPO_NAME: str         # repo where PDFs are stored
-    GITHUB_BRANCH: str = "main"   # branch to upload to
-    GITHUB_PDF_FOLDER: str = "pdf" # folder inside repo
+    # ── GitHub ──
+    GITHUB_TOKEN:       str
+    GITHUB_REPO_OWNER:  str
+    GITHUB_REPO_NAME:   str
+    GITHUB_BRANCH:      str = "main"
+    GITHUB_PDF_FOLDER:  str = "pdf"
 
-    # --- Google OAuth ---
+    # ── Google OAuth ──
     GOOGLE_CLIENT_ID: str
 
-    # --- App ---
-    ALLOWED_ORIGINS: str = "*"    # comma separated, e.g. "https://yoursite.com"
+    # ── Groq LLM ──
+    GROQ_API_KEY: str
+
+    # ── Qdrant Cloud ──
+    QDRANT_URL:     str   # e.g. https://abc123.us-east4-0.gcp.cloud.qdrant.io
+    QDRANT_API_KEY: str
+
+    # ── App ──
+    ALLOWED_ORIGINS: str = "*"
 
     class Config:
-        env_file = ".env",         # reads from .env file automatically
-        extra = "ignore"
+        env_file = ".env"
+        extra="ignore"
 
 
-# Single instance — import this everywhere
 settings = Settings()

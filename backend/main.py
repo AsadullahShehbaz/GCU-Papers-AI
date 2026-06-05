@@ -16,7 +16,7 @@ from fastapi.staticfiles import StaticFiles
 from config import settings
 from database import engine, Base
 from routes import papers, auth
-
+from rag import router as rag_router        
 
 # ── Logging setup ─────────────────────────────────────────────
 def setup_logging():
@@ -133,6 +133,7 @@ app.add_middleware(
 # ── Routes ────────────────────────────────────────────────────
 app.include_router(papers.router, prefix="/api/papers")
 app.include_router(auth.router,   prefix="/api/auth")
+app.include_router(rag_router.router, prefix="/api/rag")  
 logger.info("APP | Routers registered: /api/papers, /api/auth")
 
 # ── Static frontend ───────────────────────────────────────────

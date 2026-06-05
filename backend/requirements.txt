@@ -8,3 +8,13 @@ pydantic-settings==2.3.0
 google-auth==2.30.0
 requests==2.31.0
 aiofiles==23.2.1
+
+# ── RAG ──
+langchain==0.2.6
+langchain-community==0.2.6
+langchain-groq==0.1.6
+langchain-qdrant==0.1.2
+langchain-huggingface==0.0.3
+qdrant-client==1.9.1
+sentence-transformers==3.0.1
+pypdf==4.2.0
