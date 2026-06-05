@@ -17,7 +17,7 @@ logger = logging.getLogger("gcul_api.rag.chain")
 # streaming=True enables word-by-word streaming
 def get_llm(streaming: bool = True) -> ChatGroq:
     return ChatGroq(
-        model="llama3-70b-8192",
+        model="openai/gpt-oss-120b",
         api_key=settings.GROQ_API_KEY,
         temperature=0.3,
         max_tokens=1200,

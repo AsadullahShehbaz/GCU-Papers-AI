@@ -12,7 +12,6 @@ from config import settings
 logger = logging.getLogger("gcul_api.rag.vectorstore")
 
 EMBEDDING_MODEL = "gemini-embedding-001"
-VECTOR_SIZE = 768
 
 # ============================================================
 # Global cached clients
@@ -78,8 +77,12 @@ def embed_query(text: str) -> List[float]:
         model=EMBEDDING_MODEL,
         contents=text,
     )
+    logger.info(f"EMBEDDINGS Size {len(result.embeddings[0].values)}")
 
     return result.embeddings[0].values
+def get_vector_size():
+    return len(embed_query("test"))
+VECTOR_SIZE = get_vector_size()
 
 
 # ============================================================
@@ -92,6 +95,8 @@ class EmbeddingWrapper(Embeddings):
         return embed_documents(texts)
 
     def embed_query(self, text):
+        VECTOR_SIZE = len(embed_query(text))
+        logger.info("VECTOR SIZE =", VECTOR_SIZE)
         return embed_query(text)
 
 
@@ -126,6 +131,7 @@ def get_qdrant_client():
 
 def collection_exists(collection_name: str) -> bool:
 
+    
     client = get_qdrant_client()
 
     existing = [
@@ -183,6 +189,7 @@ def index_chunks(
         collection_name=collection_name,
         url=settings.QDRANT_URL,
         api_key=settings.QDRANT_API_KEY,
+        timeout=180.0,
     )
 
     logger.info(

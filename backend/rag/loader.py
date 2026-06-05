@@ -1,46 +1,24 @@
-# ============================================================
-# rag/loader.py — PDF Loading & Chunking
-# Downloads PDF from URL, splits into overlapping chunks
-# ============================================================
-
 import logging
 import hashlib
 import tempfile
+import os  # <-- Added to cleanly manage temp files
 import httpx
-
+from langchain_community.document_loaders.parsers.pdf import RapidOCRBlobParser
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 logger = logging.getLogger("gcul_api.rag.loader")
 
-# ── Chunk settings ────────────────────────────────────────────
-# chunk_size: characters per chunk (not tokens)
-# chunk_overlap: overlap between chunks so context isn't lost at boundaries
-CHUNK_SIZE    = 800
+CHUNK_SIZE    = 600
 CHUNK_OVERLAP = 150
 
 
 def pdf_url_to_collection_name(pdf_url: str) -> str:
-    """
-    Convert a PDF URL to a safe, unique Qdrant collection name.
-    e.g. "https://raw.github.../dsa.pdf" → "paper_a3f9c1b2"
-
-    Qdrant collection names must be alphanumeric + underscores only.
-    """
     url_hash = hashlib.md5(pdf_url.encode()).hexdigest()[:8]
     return f"paper_{url_hash}"
 
 
 async def load_and_chunk_pdf(pdf_url: str) -> list:
-    """
-    Download PDF from URL, load pages, split into chunks.
-
-    Returns:
-        List of LangChain Document objects with page_content + metadata
-
-    Raises:
-        Exception if download or parsing fails
-    """
     logger.info("LOADER | Downloading PDF: %s", pdf_url)
 
     # 1. Download PDF bytes
@@ -53,27 +31,56 @@ async def load_and_chunk_pdf(pdf_url: str) -> list:
     pdf_bytes = response.content
     logger.info("LOADER | Downloaded %.1f KB", len(pdf_bytes) / 1024)
 
-    # 2. Save to temp file — PyPDFLoader needs a file path
-    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
-        tmp.write(pdf_bytes)
-        tmp_path = tmp.name
+    # 2. Save to temp file & close it safely so other processes can read it
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+            tmp.write(pdf_bytes)
+            tmp_path = tmp.name  # Grab the path
+        
+        # File is now closed and safe to read on Windows!
 
-    # 3. Load pages with PyPDFLoader
-    loader = PyPDFLoader(tmp_path)
-    pages  = loader.load()
-    logger.info("LOADER | Loaded %d pages", len(pages))
+        # 3. Load pages with PyPDFLoader + RapidOCR
+        loader = PyPDFLoader(
+            tmp_path, 
+            extract_images=True, 
+            images_parser=RapidOCRBlobParser()
+        )
+        
+        pages = loader.load()
+        logger.info("LOADER | Loaded %d raw pages", len(pages))
+        
+        # Filter and log the actual text captured
+        valid_pages = []
+        for i, page in enumerate(pages):
+            content_sample = page.page_content.strip()
+            if content_sample:
+                valid_pages.append(page)
+                # Useful debug trace to verify OCR content extraction in terminal
+                logger.info("LOADER | Page %d has text content sample: %s...", i+1, repr(content_sample[:50]))
+            else:
+                logger.warning("LOADER | Page %d extracted text was empty!", i+1)
 
-    if not pages:
-        raise Exception("PDF appears to be empty or unreadable")
+        if not valid_pages:
+            logger.error("LOADER | Failed to pull text content even after attempting OCR!")
+            return []
 
-    # 4. Split into chunks
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=CHUNK_SIZE,
-        chunk_overlap=CHUNK_OVERLAP,
-        separators=["\n\n", "\n", ". ", " ", ""],
-    )
+        # 4. Split into chunks using validated data
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=CHUNK_SIZE,
+            chunk_overlap=CHUNK_OVERLAP,
+            length_function=len
+        )
 
-    chunks = splitter.split_documents(pages)
-    logger.info("LOADER | Split into %d chunks", len(chunks))
+        chunks = splitter.split_documents(valid_pages)  # <-- Fixed: passing valid_pages
+        logger.info("LOADER | Split into %d chunks", len(chunks))
 
-    return chunks
+        return chunks
+
+    finally:
+        # Clean up filesystem by removing the temp file when finished
+        if tmp_path and os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except Exception as e:
+                logger.warning("LOADER | Cleanup failed for temporary file: %s", e)

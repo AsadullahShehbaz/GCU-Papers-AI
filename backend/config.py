@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str
 
     # ── Qdrant Cloud ──
-    QDRANT_URL:     str   # e.g. https://abc123.us-east4-0.gcp.cloud.qdrant.io
+    QDRANT_URL:     str   
     QDRANT_API_KEY: str
 
     # ── App ──

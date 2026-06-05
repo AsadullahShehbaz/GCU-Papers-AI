@@ -19,20 +19,38 @@ from routes import papers, auth
 from rag import router as rag_router        
 
 # ── Logging setup ─────────────────────────────────────────────
+import os  # <-- Add this import at the top of your main.py file
+
+# ── Logging setup ─────────────────────────────────────────────
 def setup_logging():
     """
-    Configure logging to stdout so Vercel captures every line.
-    Vercel streams stdout/stderr directly into its log viewer.
+    Configure logging to stream to stdout (CLI/Vercel) AND save to a local log file.
     """
     log_format = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
     date_format = "%Y-%m-%dT%H:%M:%S"
+    
+    # 1. Create a formatter instance
+    formatter = logging.Formatter(fmt=log_format, datefmt=date_format)
 
+    # 2. Setup Console/CLI Handler (stdout)
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+    console_handler.setLevel(logging.INFO)
+
+    # 3. Setup File Handler
+    log_filename = "app.log"
+    
+    # Note: If running on Vercel, use '/tmp/app.log' instead, 
+    # though it will wipe frequently due to serverless lifecycle.
+    file_handler = logging.FileHandler(log_filename, encoding="utf-8")
+    file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.INFO)
+
+    # 4. Configure Root Logger with both handlers
     logging.basicConfig(
         level=logging.INFO,
-        format=log_format,
-        datefmt=date_format,
-        stream=sys.stdout,       # ← Vercel reads stdout
-        force=True,              # ← override any existing handlers
+        handlers=[console_handler, file_handler],
+        force=True, # Overrides any existing default handlers
     )
 
     # Quieten noisy third-party loggers
@@ -40,7 +58,6 @@ def setup_logging():
     logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
 
     return logging.getLogger("gcul_api")
-
 
 logger = setup_logging()
 
