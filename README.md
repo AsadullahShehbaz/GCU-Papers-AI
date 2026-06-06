@@ -1,4 +1,4 @@
-
+[![GCUL Papers AI](thumbnail.png)](https://gculpapersai.vercel.app)
 # GCUL Papers AI 📚🚀
 
 An elegant, high-performance web portal tailored for GCU Lahore Computer Science and IT students to index, preview, download, and crowdsource university past papers. Built with ultra-lightweight vanilla JavaScript, asynchronous API integrations, dynamic state caching, and a responsive glassmorphic UI layout.
