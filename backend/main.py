@@ -38,18 +38,18 @@ def setup_logging():
     console_handler.setLevel(logging.INFO)
 
     # 3. Setup File Handler
-    log_filename = "app.log"
+    # log_filename = "app.log"
     
     # Note: If running on Vercel, use '/tmp/app.log' instead, 
     # though it will wipe frequently due to serverless lifecycle.
-    file_handler = logging.FileHandler(log_filename, encoding="utf-8")
-    file_handler.setFormatter(formatter)
-    file_handler.setLevel(logging.INFO)
+    # file_handler = logging.FileHandler(log_filename, encoding="utf-8")
+    # file_handler.setFormatter(formatter)
+    # file_handler.setLevel(logging.INFO)
 
     # 4. Configure Root Logger with both handlers
     logging.basicConfig(
         level=logging.INFO,
-        handlers=[console_handler, file_handler],
+        handlers=[console_handler],
         force=True, # Overrides any existing default handlers
     )
 
