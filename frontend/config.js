@@ -15,7 +15,7 @@ const CONFIG = {
   // Dynamic API URL assignment
   API_URL: isLocalhost 
     ? "http://127.0.0.1:8000" 
-    : "https://gcupapersai.vercel.app/",
+    : "https://gculpapersai.vercel.app/",
   
 
   // Your Google OAuth Client ID
