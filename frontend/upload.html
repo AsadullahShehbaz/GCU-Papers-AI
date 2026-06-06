@@ -334,7 +334,361 @@
     }
 
     .success-screen p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+/* ── LAYOUT ── */
+    .upload-page {
+      min-height: calc(100vh - 61px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
 
+    @media (max-width: 900px) {
+      .upload-page { 
+        grid-template-columns: 1fr; 
+      }
+      /* Hide the desktop panel illustration variant to save viewport real estate */
+      .upload-left { 
+        display: none !important; 
+      }
+    }
+
+    /* ── LEFT — motivation panel ── */
+    .upload-left {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 60px 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: sticky;
+      top: 61px;
+      height: calc(100vh - 61px);
+      overflow: hidden;
+    }
+
+    /* glowing orb bg */
+    .upload-left::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16,163,127,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .upload-left-inner { position: relative; z-index: 1; }
+
+    .upload-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(16,163,127,.3);
+      border-radius: var(--radius-pill);
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .upload-left h1 {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 3.5vw, 46px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      margin-bottom: 18px;
+    }
+
+    .upload-left h1 em { font-style: normal; color: var(--accent); }
+
+    .upload-left p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+      margin-bottom: 40px;
+      max-width: 380px;
+    }
+
+    /* Impact cards */
+    .impact-cards { display: flex; flex-direction: column; gap: 12px; }
+
+    .impact-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      transition: border-color var(--t);
+    }
+
+    .impact-card:hover { border-color: rgba(16,163,127,.3); }
+
+    .impact-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .impact-card h4 { font-family: var(--font-display); font-size: 14px; font-weight: 800; margin-bottom: 2px; }
+    .impact-card p  { color: var(--muted); font-size: 12px; line-height: 1.4; }
+
+    /* ── RIGHT — form panel ── */
+    .upload-right {
+      padding: 60px 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 680px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Login gate — shown when not logged in ── */
+    .login-gate {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .login-gate-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(16,163,127,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 24px;
+    }
+
+    .login-gate h2 {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 10px;
+    }
+
+    .login-gate p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    /* Form Layout Elements */
+    .upload-form-wrap { display: none; }
+    .upload-form-wrap.visible { display: block; }
+
+    .upload-form-wrap h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 6px;
+    }
+
+    .upload-form-wrap > p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 36px;
+    }
+
+    .upload-form { display: flex; flex-direction: column; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 7px; }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .3px;
+    }
+
+    .form-group input,
+    .form-group select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px; /* Better readability + prevents iOS zooming bugs */
+      padding: 14px 16px; /* Generous touch targets */
+      outline: none;
+      transition: border-color var(--t), box-shadow var(--t);
+      width: 100%;
+      appearance: none; /* Uniform styling across Safari mobile / Android browsers */
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
+    .form-grid-2 { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 16px; 
+    }
+
+    /* ── File drop zone ── */
+    .file-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-md);
+      padding: 36px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--t), background var(--t);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .file-zone:hover,
+    .file-zone.drag-over {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .file-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .file-zone-icon { font-size: 32px; margin-bottom: 10px; }
+    .file-zone-text { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .file-zone-sub { color: var(--muted); font-size: 12px; }
+
+    .file-selected {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(16,163,127,.3);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 10px;
+      word-break: break-all; /* Prevents long filenames from breaking out of containers */
+    }
+
+    .file-selected.visible { display: flex; }
+
+    /* Progress bar */
+    .upload-progress {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .upload-progress.visible { display: flex; }
+
+    .progress-bar-wrap {
+      background: var(--surface2);
+      border-radius: var(--radius-pill);
+      height: 6px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: var(--radius-pill);
+      width: 0%;
+      transition: width .4s var(--ease);
+    }
+
+    .progress-label { font-size: 12px; color: var(--muted); }
+
+    /* Status text */
+    .upload-status { font-size: 14px; text-align: center; min-height: 20px; font-weight: 500; }
+    .upload-status.success { color: var(--accent); }
+    .upload-status.error   { color: #e53e3e; }
+    .upload-status.loading { color: var(--muted); }
+
+    /* Success screen layout variations */
+    .success-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      padding: 40px 0;
+    }
+
+    .success-screen.visible { display: flex; }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      animation: pop .4s var(--ease);
+    }
+
+    @keyframes pop {
+      0%   { transform: scale(0); }
+      70%  { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    .success-screen h3 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .success-screen p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* ── MOBILE SPECIFIC MEDIA QUERIES ── */
+    @media (max-width: 600px) {
+      .upload-right {
+        padding: 32px 16px 60px; /* Snug edge tracking space */
+      }
+      
+      .upload-form-wrap h2 {
+        font-size: 24px; /* Scaled header text */
+      }
+      
+      .form-grid-2 {
+        grid-template-columns: 1fr; /* Stack Semester/Year and Type/Department inputs on top of each other */
+        gap: 20px;
+      }
+      
+      .file-zone {
+        padding: 28px 14px; /* Maximized surface area area inside form constraints */
+      }
+
+      .success-screen style a, 
+      .success-screen button {
+        width: 100%; /* Full span action controls for mobile touch interactions */
+      }
+    }
   </style>
 </head>
 <body>

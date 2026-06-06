@@ -7,16 +7,21 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
   <link rel="stylesheet" href="shared.css">
   <style>
+    /* ── LAYOUT ── */
     .contact-layout {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 60px;
       align-items: start;
-      padding: 80px 0;
+      padding: 60px 0;
     }
 
-    @media (max-width: 760px) {
-      .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+    @media (max-width: 900px) {
+      .contact-layout { 
+        grid-template-columns: 1fr; 
+        gap: 40px; 
+        padding: 40px 0;
+      }
     }
 
     /* ── LEFT ── */
@@ -51,9 +56,15 @@
       transition: border-color var(--t), transform var(--t);
       text-decoration: none;
       color: var(--text);
+      word-break: break-word; /* Prevents long emails from clipping on narrow screens */
     }
 
     .contact-channel:hover { border-color: var(--accent-glow); transform: translateX(4px); }
+
+    /* Disable translational hover state on mobile devices to prevent sticky hover states */
+    @media (max-width: 760px) {
+      .contact-channel:hover { transform: none; }
+    }
 
     .channel-icon {
       width: 44px;
@@ -92,7 +103,6 @@
     }
 
     .contact-form { display: flex; flex-direction: column; gap: 16px; }
-
     .form-field { display: flex; flex-direction: column; gap: 7px; }
 
     .form-field label {
@@ -109,22 +119,20 @@
       border-radius: var(--radius-sm);
       color: var(--text);
       font-family: var(--font-body);
-      font-size: 14px;
-      padding: 12px 14px;
+      font-size: 15px; /* Upgraded to 15px/16px for comfortable mobile layout reading */
+      padding: 14px 16px; /* Generous finger-touch targets */
       outline: none;
       transition: border-color var(--t);
       width: 100%;
+      appearance: none; /* Uniform system styling across iOS Safari and Android */
     }
 
     .form-field input:focus,
     .form-field select:focus,
     .form-field textarea:focus { border-color: var(--accent); }
-
     .form-field textarea { resize: vertical; min-height: 120px; }
 
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-    @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
 
     .form-status { font-size: 13px; text-align: center; min-height: 18px; }
     .form-status.success { color: #10b981; }
@@ -159,7 +167,6 @@
     }
 
     .faq-question:hover { color: var(--accent); }
-
     .faq-arrow { transition: transform var(--t); flex-shrink: 0; }
     .faq-item.open .faq-arrow { transform: rotate(180deg); }
 
@@ -173,7 +180,36 @@
       padding: 0 22px;
     }
 
-    .faq-item.open .faq-answer { max-height: 200px; padding: 0 22px 18px; }
+    .faq-item.open .faq-answer { 
+      max-height: 300px; /* Increased to accommodate wrapped text on narrow views */
+      padding: 0 22px 18px; 
+    }
+
+    /* ── MOBILE BREAKPOINT REFINEMENTS ── */
+    @media (max-width: 600px) {
+      .contact-form-wrap {
+        padding: 24px 16px; /* Optimized internal workspace padding */
+      }
+      
+      .form-grid { 
+        grid-template-columns: 1fr; /* Stacks Name and Department inputs vertical */
+        gap: 16px; 
+      }
+      
+      .faq-question {
+        padding: 16px 18px;
+        font-size: 14px; /* Scaled slightly for compact layout flow */
+      }
+      
+      .faq-answer {
+        padding: 0 18px;
+        font-size: 13px;
+      }
+      
+      .faq-item.open .faq-answer { 
+        padding: 0 18px 16px; 
+      }
+    }
   </style>
 </head>
 <body>
