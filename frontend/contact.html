@@ -127,8 +127,8 @@
     @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
 
     .form-status { font-size: 13px; text-align: center; min-height: 18px; }
-    .form-status.success { color: var(--accent); }
-    .form-status.error   { color: var(--danger); }
+    .form-status.success { color: #10b981; }
+    .form-status.error   { color: #ef4444; }
 
     /* ── FAQ ── */
     .faq-list { display: flex; flex-direction: column; gap: 12px; margin-top: 60px; }
@@ -178,7 +178,6 @@
 </head>
 <body>
 
-  <!-- NAV -->
   <nav class="nav">
     <div class="nav-logo">📚 GCU Papers</div>
     <div class="nav-links">
@@ -194,7 +193,6 @@
 
     <div class="contact-layout">
 
-      <!-- LEFT -->
       <div class="contact-left fade-up">
         <h1>Let's <span>Connect.</span></h1>
         <p>
@@ -227,7 +225,7 @@
             </div>
           </a>
 
-          <a href="https://forms.gle/YOUR_FORM_ID" target="_blank" class="contact-channel">
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfRU3Z2vaNAdBGH0EqAB1MCwCN6kTrf0wLgzw0CtxcsNt6y9g/viewform" target="_blank" class="contact-channel">
             <div class="channel-icon">📝</div>
             <div>
               <div class="channel-label">Contribute Papers</div>
@@ -237,57 +235,57 @@
         </div>
       </div>
 
-      <!-- RIGHT (FORM) -->
       <div class="contact-form-wrap fade-up-2">
         <h2>Send a Message</h2>
         <p>I read every message and reply within 24 hours.</p>
 
-        <form class="contact-form" id="contactForm">
+        <form class="contact-form" id="contactForm" action="https://docs.google.com/forms/d/e/1FAIpQLSfRU3Z2vaNAdBGH0EqAB1MCwCN6kTrf0wLgzw0CtxcsNt6y9g/formResponse" method="POST">
+          
           <div class="form-grid">
             <div class="form-field">
               <label>Your Name</label>
-              <input type="text" name="name" placeholder="Asadullah Shehbaz" required>
+              <input type="text" name="entry.880092305" placeholder="Asadullah Shehbaz"  required>
             </div>
             <div class="form-field">
               <label>Department</label>
-              <select name="dept">
-                <option value="">Select (optional)</option>
-                <option>BSCS</option>
-                <option>BSSE</option>
-                <option>BSIT</option>
-                <option>BSAI</option>
-                <option>BS Mathematics</option>
-                <option>Other</option>
+              <select name="entry.235948793" required>
+                <option value="">Select department</option>
+                <option value="BSCS">BSCS</option>
+                <option value="BSSE">BSSE</option>
+                <option value="BSIT">BSIT</option>
+                <option value="BSAI">BSAI</option>
+                <option value="BS Mathematics">BS Mathematics</option>
+                <option value="Other">Other</option>
               </select>
             </div>
           </div>
 
           <div class="form-field">
             <label>Email</label>
-            <input type="email" name="email" placeholder="you@gmail.com" required>
+            <input type="email" name="entry.1742464161" placeholder="you@gmail.com" required>
           </div>
 
           <div class="form-field">
             <label>Subject</label>
-            <select name="subject" required>
+            <select name="entry.316885375" required>
               <option value="">Select topic</option>
-              <option>Report a missing paper</option>
-              <option>Bug or error on site</option>
-              <option>Bulk paper contribution</option>
-              <option>Collaboration</option>
-              <option>General question</option>
-              <option>Other</option>
+              <option value="Report a missing paper">Report a missing paper</option>
+              <option value="Bug or error on site">Bug or error on site</option>
+              <option value="Bulk paper contribution">Bulk paper contribution</option>
+              <option value="Collaboration">Collaboration</option>
+              <option value="General question">General question</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
           <div class="form-field">
             <label>Message</label>
-            <textarea name="message" placeholder="Write your message here…" required></textarea>
+            <textarea name="entry.2120392348" placeholder="Write your message here…" required></textarea>
           </div>
 
           <p id="formStatus" class="form-status"></p>
 
-          <button type="submit" class="btn btn-primary" style="justify-content:center; width:100%; padding:14px;">
+          <button type="submit" id="submitBtn" class="btn btn-primary" style="justify-content:center; width:100%; padding:14px;">
             Send Message →
           </button>
         </form>
@@ -295,7 +293,6 @@
 
     </div>
 
-    <!-- FAQ -->
     <div style="max-width: 700px; margin: 0 auto; padding-bottom: 80px;">
       <div class="section-header" style="text-align:left; margin-bottom: 32px;">
         <span class="section-tag">FAQ</span>
@@ -347,7 +344,6 @@
 
   </div>
 
-  <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-logo">📚 GCU Papers</div>
     <p>Made with ❤️ for GCU Lahore students</p>
@@ -377,22 +373,39 @@
       item.classList.toggle("open");
     }
 
-    // Contact form — opens mailto as fallback (no backend needed)
+    // Smooth Google Form AJAX Submission Logic
     document.getElementById("contactForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const data   = new FormData(this);
-      const name   = data.get("name");
-      const email  = data.get("email");
-      const subj   = data.get("subject");
-      const msg    = data.get("message");
-
-      const mailtoLink = `mailto:asadullahcreative@gmail.com?subject=${encodeURIComponent(subj + ' — from ' + name)}&body=${encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + msg)}`;
-
-      window.location.href = mailtoLink;
-
+      
+      const form = this;
       const status = document.getElementById("formStatus");
-      status.textContent = "✅ Opening your email client…";
-      status.className = "form-status success";
+      const submitBtn = document.getElementById("submitBtn");
+
+      // Set Loading UI
+      status.textContent = "⏳ Sending your message...";
+      status.className = "form-status";
+      submitBtn.disabled = true;
+
+      // Submit data using no-cors mode to bypass Google's response headers
+      fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        mode: "no-cors"
+      })
+      .then(() => {
+        // no-cors forces an opaque response, which treats execution as a baseline success
+        status.textContent = "✅ Message sent successfully! Thank you.";
+        status.className = "form-status success";
+        form.reset();
+      })
+      .catch(error => {
+        console.error("Submission Error:", error);
+        status.textContent = "❌ Network error. Failed to reach server.";
+        status.className = "form-status error";
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+      });
     });
   </script>
 

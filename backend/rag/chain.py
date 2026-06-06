@@ -49,6 +49,7 @@ Instructions:
 - For theory: use bullet points with **bold** key terms
 - Be concise, accurate, and exam-focused
 - Use numbered steps for procedures
+- Layout Guardrail: Under no circumstances render tables, grids, or markdown tables unless explicitly requested in the student's question. Use clean text prose blocks only. 
 """)
 
 
