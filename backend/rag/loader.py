@@ -3,12 +3,12 @@ import hashlib
 import tempfile
 import os  # <-- Added to cleanly manage temp files
 import httpx
-from langchain_community.document_loaders.parsers.pdf import RapidOCRBlobParser
-from langchain_community.document_loaders import PyPDFLoader
+from langchain.schema import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-
+from google import genai
+from config import settings
 logger = logging.getLogger("gcul_api.rag.loader")
-
+GEMINI_MODEL = "gemini-2.5-flash"
 CHUNK_SIZE    = 600
 CHUNK_OVERLAP = 150
 
@@ -17,6 +17,33 @@ def pdf_url_to_collection_name(pdf_url: str) -> str:
     url_hash = hashlib.md5(pdf_url.encode()).hexdigest()[:8]
     return f"paper_{url_hash}"
 
+
+def extract_text_with_gemini(pdf_bytes: bytes)->str:
+    logger.info('Loader | Sending pdfs to gemini for extraction text')
+    client = genai.Client(api_key=settings.GOOGLE_API_KEY)
+    response = client.models.generate_content(
+        model=GEMINI_MODEL,
+        contents=[
+            {
+                "parts":[
+                    {
+                        "inline_data" : {
+                            "mime_type": "application/pdf",
+                            "data" : pdf_bytes
+                        }
+                    },
+                    {
+                        "text" : "Extract all text from this PDF .Include all questions , table , any text visible in images or scanned pages.Preserve structure with line breaks between sections.Don't summarize , extract everything verbatim.",
+
+                    }
+                ]
+
+            },
+        ]
+    )
+    extracted =  response.text
+    logger.info(f'Loader | Gemini extracted {len(extracted)} characters')
+    return extracted
 
 async def load_and_chunk_pdf(pdf_url: str) -> list:
     logger.info("LOADER | Downloading PDF: %s", pdf_url)
@@ -31,56 +58,63 @@ async def load_and_chunk_pdf(pdf_url: str) -> list:
     pdf_bytes = response.content
     logger.info("LOADER | Downloaded %.1f KB", len(pdf_bytes) / 1024)
 
-    # 2. Save to temp file & close it safely so other processes can read it
-    tmp_path = None
+    # 2. 
     try:
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
-            tmp.write(pdf_bytes)
-            tmp_path = tmp.name  # Grab the path
-        
-        # File is now closed and safe to read on Windows!
+        import base64
+        pdf_b64 = base64.b64encode(pdf_bytes).decode("utf-8")
+        full_text = _extract_with_geminib64(pdf_b64,settings.GOOGLE_API_KEY)
+    except Exception as e:
+        logger.info(f'Loader | Gemini Extraction Failed : {e}')
+        raise Exception(f'Gemini Extraction Failed : {e}')
+   
+  
 
-        # 3. Load pages with PyPDFLoader + RapidOCR
-        loader = PyPDFLoader(
-            tmp_path, 
-            extract_images=True, 
-            images_parser=RapidOCRBlobParser()
-        )
-        
-        pages = loader.load()
-        logger.info("LOADER | Loaded %d raw pages", len(pages))
-        
-        # Filter and log the actual text captured
-        valid_pages = []
-        for i, page in enumerate(pages):
-            content_sample = page.page_content.strip()
-            if content_sample:
-                valid_pages.append(page)
-                # Useful debug trace to verify OCR content extraction in terminal
-                logger.info("LOADER | Page %d has text content sample: %s...", i+1, repr(content_sample[:50]))
-            else:
-                logger.warning("LOADER | Page %d extracted text was empty!", i+1)
+    if not full_text or not full_text.strip():
+        raise Exception('Gemini returned empty text - pdf may be currupted ')
+    
+    logger.info(f'Loader | Gemini Extracted {len(full_text)} characters')
 
-        if not valid_pages:
-            logger.error("LOADER | Failed to pull text content even after attempting OCR!")
-            return []
+    doc = Document(
+    page_content = full_text,
+    metadata = {
+        "source": pdf_url,
+        "extraction_method": "gemini",
+    }
+)
+    # 4. Split into chunks using validated data
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        separators=["\n\n", "\n",". ",", "," ",""],
+        length_function=len
+    )
 
-        # 4. Split into chunks using validated data
-        splitter = RecursiveCharacterTextSplitter(
-            chunk_size=CHUNK_SIZE,
-            chunk_overlap=CHUNK_OVERLAP,
-            length_function=len
-        )
+    chunks = splitter.split_documents(valid_pages)  # <-- Fixed: passing valid_pages
+    logger.info("LOADER | Split into %d chunks", len(chunks))
 
-        chunks = splitter.split_documents(valid_pages)  # <-- Fixed: passing valid_pages
-        logger.info("LOADER | Split into %d chunks", len(chunks))
+    return chunks
 
-        return chunks
+def __extract_with_geminib64(pdf_b64 : str ,api_key : str)-> str :
+    client = genai.Client(api_key=settings.GOOGLE_API_KEY)
+    response = client.models.generate_content(
+        model=GEMINI_MODEL,
+        contents=[
+            {
+                "parts":[
+                    {
+                        "inline_data" : {
+                            "mime_type": "application/pdf",
+                            "data" : pdf_bytes
+                        }
+                    },
+                    {
+                        "text" : "Extract all text from this PDF .Include all questions , table , any text visible in images or scanned pages.Preserve structure with line breaks between sections.Don't summarize , extract everything verbatim.",
 
-    finally:
-        # Clean up filesystem by removing the temp file when finished
-        if tmp_path and os.path.exists(tmp_path):
-            try:
-                os.remove(tmp_path)
-            except Exception as e:
-                logger.warning("LOADER | Cleanup failed for temporary file: %s", e)
+                    }
+                ]
+
+            },
+        ]
+    )
+    extracted =  response.text
+    return extracted
