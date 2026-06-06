@@ -3,222 +3,752 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GCU Lahore Past Papers</title>
-  <meta name="description" content="Search, view and download past papers for all GCU Lahore departments — free for every student.">
+  <title>GCU Papers AI — Study Smarter</title>
+  <meta name="description" content="Past papers + RAG AI assistant for every GCU Lahore department. Search, view, download and get instant AI explanations.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
   <link rel="stylesheet" href="shared.css">
+
+  <!-- Distinctive font pairing: Bebas Neue (display) + Outfit (body) -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    /* ── HERO ── */
+    /* ── Override shared font vars for this page ── */
+    :root {
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body:    'Outfit', sans-serif;
+      --bg:           #050508;
+      --surface:      #0d0d12;
+      --surface2:     #13131a;
+      --border:       #1c1c26;
+      --text:         #eeeef5;
+      --muted:        #5a5a72;
+      --accent:       #10a37f;
+      --accent-dim:   rgba(16,163,127,.1);
+      --accent-glow:  rgba(16,163,127,.2);
+      --purple:       #7c3aed;
+      --purple-dim:   rgba(124,58,237,.12);
+      --purple-glow:  rgba(124,58,237,.25);
+    }
+
+    body.light {
+      --bg:       #f4f4f8;
+      --surface:  #ffffff;
+      --surface2: #ebebf0;
+      --border:   #dddde8;
+      --text:     #0d0d12;
+      --muted:    #8080a0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+    /* ── NAV ── */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 6%;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(5,5,8,.88);
+      backdrop-filter: blur(20px);
+      z-index: 100;
+    }
+
+    body.light .nav { background: rgba(244,244,248,.9); }
+
+    .nav-logo { font-family: var(--font-display); font-size: 22px; letter-spacing: 1px; }
+
+    .nav-links { display: flex; align-items: center; gap: 4px; }
+
+    .nav-links a {
+      padding: 7px 14px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s, background .2s;
+    }
+
+    .nav-links a:hover, .nav-links a.active { color: var(--text); background: var(--surface2); }
+
+    .nav-cta {
+      background: var(--accent) !important;
+      color: #fff !important;
+    }
+
+    .theme-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      color: var(--muted);
+      padding: 7px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-left: 4px;
+      transition: border-color .2s;
+    }
+
+    .theme-btn:hover { border-color: var(--accent); }
+
+    @media (max-width: 600px) { .nav-links a:not(.nav-cta) { display: none; } }
+
+    /* ============================================================
+       HERO — full viewport, editorial layout
+       ============================================================ */
     .hero {
-      padding: 110px 0 80px;
-      text-align: center;
+      min-height: 96vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
       position: relative;
       overflow: hidden;
     }
 
-    /* subtle grid background */
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-right { display: none; }
+    }
+
+    /* noise texture overlay */
     .hero::before {
       content: '';
       position: absolute;
       inset: 0;
-      background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 48px 48px;
-      opacity: .4;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
       pointer-events: none;
+      z-index: 0;
     }
 
-    /* radial fade over grid */
-    .hero::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 70% 60% at 50% 0%, transparent 40%, var(--bg) 100%);
-      pointer-events: none;
-    }
-
-    .hero-inner { position: relative; z-index: 1; }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--accent-dim);
-      border: 1px solid rgba(16,163,127,.3);
-      border-radius: var(--radius-pill);
-      padding: 6px 16px;
-      font-size: 13px;
-      color: var(--accent);
-      font-weight: 600;
-      margin-bottom: 28px;
-    }
-
-    .hero h1 {
-      font-family: var(--font-display);
-      font-size: clamp(42px, 7vw, 82px);
-      font-weight: 900;
-      line-height: 1.0;
-      letter-spacing: -3px;
-      margin-bottom: 22px;
-    }
-
-    .hero h1 em {
-      font-style: normal;
-      color: var(--accent);
-    }
-
-    .hero-sub {
-      font-size: clamp(16px, 2vw, 19px);
-      color: var(--muted);
-      max-width: 520px;
-      margin: 0 auto 40px;
-      line-height: 1.65;
-    }
-
-    .hero-actions {
+    /* ── LEFT ── */
+    .hero-left {
+      padding: 80px 6% 80px 8%;
       display: flex;
-      gap: 14px;
+      flex-direction: column;
       justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    /* ── STATS BAR ── */
-    .stats-bar {
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 32px 0;
-      background: var(--surface);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0;
-    }
-
-    .stat-item {
-      text-align: center;
-      padding: 0 20px;
+      position: relative;
+      z-index: 1;
       border-right: 1px solid var(--border);
     }
 
-    .stat-item:last-child { border-right: none; }
+    @media (max-width: 860px) { .hero-left { padding: 60px 6%; border-right: none; } }
 
-    .stat-number {
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(124,58,237,.25);
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #a78bfa;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      width: fit-content;
+      animation: fadeUp .6s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #a78bfa;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .hero-h1 {
       font-family: var(--font-display);
-      font-size: 38px;
-      font-weight: 900;
+      font-size: clamp(64px, 9vw, 120px);
+      line-height: .92;
+      letter-spacing: 2px;
+      margin-bottom: 28px;
+      animation: fadeUp .6s cubic-bezier(.16,1,.3,1) .1s both;
+    }
+
+    .hero-h1 .line-accent { color: var(--accent); }
+    .hero-h1 .line-purple { color: #a78bfa; }
+
+    .hero-desc {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 420px;
+      margin-bottom: 44px;
+      font-weight: 400;
+      animation: fadeUp .6s cubic-bezier(.16,1,.3,1) .2s both;
+    }
+
+    .hero-desc strong { color: var(--text); font-weight: 600; }
+
+    .hero-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      animation: fadeUp .6s cubic-bezier(.16,1,.3,1) .3s both;
+    }
+
+    .btn-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity .2s, transform .2s;
+    }
+
+    .btn-hero-primary:hover { opacity: .88; transform: translateY(-2px); }
+
+    .btn-hero-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--text);
+      padding: 14px 24px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: border-color .2s, transform .2s;
+    }
+
+    .btn-hero-ghost:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+    /* stat pills below buttons */
+    .hero-stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      animation: fadeUp .6s cubic-bezier(.16,1,.3,1) .4s both;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat-val {
+      font-family: var(--font-display);
+      font-size: 32px;
+      letter-spacing: 1px;
       color: var(--accent);
       display: block;
       line-height: 1;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
-    .stat-label { color: var(--muted); font-size: 14px; }
+    .hero-stat-lbl { font-size: 12px; color: var(--muted); font-weight: 500; }
 
-    @media (max-width: 640px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .stat-item:nth-child(2) { border-right: none; }
-      .stat-item:nth-child(3) { border-right: 1px solid var(--border); }
-      .stat-item:nth-child(1),
-      .stat-item:nth-child(2) { border-bottom: 1px solid var(--border); padding-bottom: 24px; }
-      .stat-item:nth-child(3),
-      .stat-item:nth-child(4) { padding-top: 24px; }
-    }
-
-    /* ── FEATURES ── */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    @media (max-width: 760px) { .features-grid { grid-template-columns: 1fr; } }
-
-    .feature-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 32px 28px;
-      transition: border-color var(--t), transform var(--t);
-    }
-
-    .feature-card:hover {
-      border-color: var(--accent-glow);
-      transform: translateY(-4px);
-    }
-
-    .feature-icon {
-      font-size: 32px;
-      margin-bottom: 18px;
-      display: block;
-    }
-
-    .feature-card h3 {
-      font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-
-    .feature-card p { color: var(--muted); font-size: 14px; line-height: 1.7; }
-
-    /* ── HOW IT WORKS ── */
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0;
+    /* ── RIGHT — AI demo panel ── */
+    .hero-right {
       position: relative;
-    }
-
-    .steps::before {
-      content: '';
-      position: absolute;
-      top: 28px;
-      left: 12.5%;
-      right: 12.5%;
-      height: 1px;
-      background: var(--border);
-    }
-
-    @media (max-width: 760px) {
-      .steps { grid-template-columns: 1fr 1fr; gap: 32px; }
-      .steps::before { display: none; }
-    }
-
-    @media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
-
-    .step { text-align: center; padding: 0 16px; }
-
-    .step-num {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
       background: var(--surface);
-      border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: var(--font-display);
-      font-size: 20px;
-      font-weight: 900;
+      padding: 60px 48px;
+      z-index: 1;
+    }
+
+    /* glow orb */
+    .hero-right::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 20%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, var(--purple-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .ai-demo {
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .35s both;
+    }
+
+    /* Demo header */
+    .ai-demo-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 16px 16px 0 0;
+      border-bottom: none;
+    }
+
+    .ai-demo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .ai-demo-title { font-family: var(--font-display); font-size: 15px; letter-spacing: .5px; }
+    .ai-demo-sub   { font-size: 11px; color: var(--muted); }
+
+    .ai-demo-badge {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
       color: var(--accent);
-      margin: 0 auto 20px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    /* Demo chat */
+    .ai-demo-body {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-bottom: none;
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .demo-msg {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      opacity: 0;
+      animation: fadeUp .5s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    .demo-msg:nth-child(1) { animation-delay: .8s; }
+    .demo-msg:nth-child(2) { animation-delay: 1.4s; }
+    .demo-msg:nth-child(3) { animation-delay: 2.0s; }
+    .demo-msg:nth-child(4) { animation-delay: 2.6s; }
+
+    .demo-msg--user { flex-direction: row-reverse; }
+
+    .demo-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      background: var(--surface2);
+    }
+
+    .demo-msg--ai .demo-avatar { background: linear-gradient(135deg,#7c3aed,#a78bfa); }
+
+    .demo-bubble {
+      max-width: 82%;
+      padding: 10px 14px;
+      border-radius: 13px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .demo-msg--user .demo-bubble {
+      background: var(--accent);
+      color: #fff;
+      border-bottom-right-radius: 3px;
+    }
+
+    .demo-msg--ai .demo-bubble {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-bottom-left-radius: 3px;
+    }
+
+    .demo-bubble strong { color: #a78bfa; font-weight: 600; }
+
+    /* Demo input */
+    .ai-demo-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 0 0 16px 16px;
+    }
+
+    .demo-input-text {
+      flex: 1;
+      font-size: 13px;
+      color: var(--muted);
+      font-family: var(--font-body);
+    }
+
+    .demo-send {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: linear-gradient(135deg,#7c3aed,#a78bfa);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    /* ── Feature tags below demo ── */
+    .demo-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .demo-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 5px 12px;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       MARQUEE — scrolling tech strip
+       ============================================================ */
+    .marquee-strip {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      background: var(--surface);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 48px;
+      animation: marquee 24s linear infinite;
+      width: max-content;
+    }
+
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .marquee-item span { color: var(--accent); }
+
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ============================================================
+       STATS SECTION
+       ============================================================ */
+    .stats-section {
+      padding: 80px 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 640px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+
+    .stat-block {
+      text-align: center;
+      padding: 0 24px;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat-block:last-child { border-right: none; }
+
+    @media (max-width: 640px) {
+      .stat-block:nth-child(2) { border-right: none; }
+      .stat-block:nth-child(3) { border-right: 1px solid var(--border); }
+      .stat-block:nth-child(1),
+      .stat-block:nth-child(2) { border-bottom: 1px solid var(--border); padding-bottom: 32px; margin-bottom: 32px; }
+    }
+
+    .stat-block-num {
+      font-family: var(--font-display);
+      font-size: 52px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      line-height: 1;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .stat-block-lbl { font-size: 13px; color: var(--muted); font-weight: 500; }
+
+    /* ============================================================
+       AI FEATURE SECTION — the star of the page
+       ============================================================ */
+    .ai-section {
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* purple glow background */
+    .ai-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--purple-dim) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .ai-section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 6%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
       position: relative;
       z-index: 1;
     }
 
-    .step h4 {
-      font-family: var(--font-display);
-      font-size: 15px;
-      font-weight: 800;
-      margin-bottom: 8px;
+    @media (max-width: 860px) {
+      .ai-section-inner { grid-template-columns: 1fr; gap: 48px; }
     }
 
-    .step p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .ai-section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(124,58,237,.25);
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #a78bfa;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
 
-    /* ── TESTIMONIALS ── */
+    .ai-section-h2 {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 5vw, 64px);
+      line-height: .95;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .ai-section-h2 em { font-style: normal; color: #a78bfa; }
+
+    .ai-section-desc {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+      margin-bottom: 36px;
+    }
+
+    /* feature list */
+    .ai-features { display: flex; flex-direction: column; gap: 16px; }
+
+    .ai-feature-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .ai-feature-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(124,58,237,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .ai-feature-row h4 { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+    .ai-feature-row p  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* right panel — pipeline diagram */
+    .ai-pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .pipeline-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      position: relative;
+      transition: border-color .2s;
+    }
+
+    .pipeline-step:first-child { border-radius: 16px 16px 0 0; }
+    .pipeline-step:last-child  { border-radius: 0 0 16px 16px; }
+
+    .pipeline-step:not(:last-child) { border-bottom: none; }
+
+    .pipeline-step:hover { border-color: rgba(124,58,237,.3); z-index: 1; }
+
+    .pipe-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--purple-dim);
+      border: 1px solid rgba(124,58,237,.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 16px;
+      color: #a78bfa;
+      flex-shrink: 0;
+    }
+
+    .pipe-content h4 { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .pipe-content p  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    .pipe-badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 3px 8px;
+      border-radius: 50px;
+      flex-shrink: 0;
+      align-self: center;
+    }
+
+    /* ============================================================
+       FEATURES GRID
+       ============================================================ */
+    .features-section {
+      padding: 100px 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-head {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 50px;
+      margin-bottom: 16px;
+    }
+
+    .section-head h2 {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 56px);
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .section-head p { color: var(--muted); font-size: 15px; max-width: 460px; margin: 0 auto; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 760px) { .features-grid { grid-template-columns: 1fr; } }
+
+    .feat-card {
+      background: var(--surface);
+      padding: 36px 32px;
+      transition: background .2s;
+    }
+
+    .feat-card:hover { background: var(--surface2); }
+
+    .feat-icon { font-size: 28px; margin-bottom: 16px; display: block; }
+
+    .feat-card h3 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: .5px;
+      margin-bottom: 10px;
+    }
+
+    .feat-card p { color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+    /* ============================================================
+       TESTIMONIALS
+       ============================================================ */
+    .testimonials-section { padding: 100px 0; }
+
     .testimonials-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -227,41 +757,28 @@
 
     @media (max-width: 760px) { .testimonials-grid { grid-template-columns: 1fr; } }
 
-    .testimonial-card {
+    .tcard {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      border-radius: 20px;
       padding: 28px;
-      position: relative;
-      transition: border-color var(--t);
+      transition: border-color .2s, transform .2s;
     }
 
-    .testimonial-card:hover { border-color: var(--accent-glow); }
+    .tcard:hover { border-color: var(--accent-glow); transform: translateY(-3px); }
 
-    .quote-mark {
-      font-family: var(--font-display);
-      font-size: 56px;
-      color: var(--accent);
-      opacity: .3;
-      line-height: .8;
-      margin-bottom: 12px;
-      display: block;
-    }
+    .tcard-stars { color: #f59e0b; font-size: 13px; margin-bottom: 14px; letter-spacing: 2px; }
 
-    .testimonial-text {
+    .tcard-text {
       font-size: 14px;
-      line-height: 1.75;
       color: var(--muted);
+      line-height: 1.75;
       margin-bottom: 22px;
     }
 
-    .testimonial-author {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .tcard-author { display: flex; align-items: center; gap: 12px; }
 
-    .author-avatar {
+    .tcard-avatar {
       width: 40px;
       height: 40px;
       border-radius: 50%;
@@ -271,270 +788,418 @@
       align-items: center;
       justify-content: center;
       font-size: 18px;
-      flex-shrink: 0;
     }
 
-    .author-name {
-      font-weight: 600;
-      font-size: 14px;
-      display: block;
-    }
+    .tcard-name  { font-size: 14px; font-weight: 600; display: block; }
+    .tcard-dept  { font-size: 11px; color: var(--muted); }
 
-    .author-dept { color: var(--muted); font-size: 12px; }
+    /* ============================================================
+       CTA BANNER
+       ============================================================ */
+    .cta-section { padding: 0 0 100px; }
 
-    .stars { color: #f59e0b; font-size: 13px; margin-bottom: 4px; }
-
-    /* ── CTA BANNER ── */
-    .cta-banner {
+    .cta-wrap {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 64px 48px;
+      border-radius: 24px;
+      padding: 72px 48px;
       text-align: center;
       position: relative;
       overflow: hidden;
     }
 
-    .cta-banner::before {
+    .cta-wrap::before {
       content: '';
       position: absolute;
-      top: -80px;
+      top: -100px;
       left: 50%;
       transform: translateX(-50%);
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
       pointer-events: none;
     }
 
-    .cta-banner h2 {
+    .cta-wrap h2 {
       font-family: var(--font-display);
-      font-size: clamp(28px, 4vw, 44px);
-      font-weight: 900;
-      letter-spacing: -1.5px;
+      font-size: clamp(36px, 5vw, 64px);
+      letter-spacing: 1px;
       margin-bottom: 14px;
       position: relative;
     }
 
-    .cta-banner p {
+    .cta-wrap p {
       color: var(--muted);
-      font-size: 16px;
-      margin-bottom: 32px;
+      font-size: 15px;
+      margin-bottom: 36px;
+      position: relative;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-btns {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
       position: relative;
     }
 
-    .cta-banner .hero-actions { position: relative; }
-
-    /* ── SECTION HEADERS ── */
-    .section-header { text-align: center; margin-bottom: 56px; }
-
-    .section-tag {
-      display: inline-block;
-      background: var(--accent-dim);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      padding: 5px 14px;
-      border-radius: var(--radius-pill);
-      margin-bottom: 16px;
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
     }
 
-    .section-header h2 {
-      font-family: var(--font-display);
-      font-size: clamp(28px, 4vw, 44px);
-      font-weight: 900;
-      letter-spacing: -1.5px;
-      margin-bottom: 12px;
+    .footer-logo { font-family: var(--font-display); font-size: 18px; letter-spacing: 1px; }
+    .footer p    { color: var(--muted); font-size: 13px; }
+
+    /* ============================================================
+       ANIMATIONS
+       ============================================================ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    .section-header p { color: var(--muted); font-size: 16px; max-width: 480px; margin: 0 auto; }
+    .container { width: 88%; max-width: 1160px; margin: 0 auto; }
   </style>
 </head>
 <body>
 
-
-<nav class="nav">
-  <div class="nav-logo">📚 GCU Papers</div>
-
-  <div class="nav-links">
-    <a href="index.html" class="active">Home</a>
-    <a href="papers.html">Papers</a>
-    <a href="upload.html">Upload</a>
-    <a href="contact.html">Contact</a>
-  </div>
-
-  <div style="display:flex; align-items:center; gap:8px;">
-    <div id="authSection">
-      <div id="googleBtn"></div>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">📚 GCU PAPERS</div>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="papers.html">Papers</a>
+      <a href="upload.html">Upload</a>
+      <a href="contact.html">Contact</a>
+      <a href="papers.html" class="nav-cta">Browse →</a>
     </div>
-    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
-  </div>
-</nav>
-  <!-- HERO -->
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div id="authSection"><div id="googleBtn"></div></div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
   <section class="hero">
-    <div class="container hero-inner">
-      <div class="hero-badge fade-up">
-        <span>🎓</span> Free for all GCU Lahore Students
+
+    <!-- LEFT -->
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <div class="eyebrow-dot"></div>
+        Now with RAG AI Assistant
       </div>
-      <h1 class="fade-up-2">
-        Study Smarter.<br>
-        Score <em>Higher.</em>
+
+      <h1 class="hero-h1">
+        PAST<br>
+        <span class="line-accent">PAPERS</span><br>
+        <span class="line-purple">+ AI.</span>
       </h1>
-      <p class="hero-sub fade-up-3">
-        Access past papers for every department at GCU Lahore —
-        search, view, and download in seconds. Completely free.
+
+      <p class="hero-desc">
+        Every GCU Lahore past paper in one place.
+        <strong>Search, view, download</strong> — then open any paper
+        and ask our <strong>RAG AI</strong> to explain every question
+        step by step in real time.
       </p>
-      <div class="hero-actions fade-up-4">
-        <a href="papers.html" class="btn btn-primary">Browse Papers →</a>
-        <a href="papers.html#upload" class="btn btn-ghost">Upload a Paper</a>
+
+      <div class="hero-btns">
+        <a href="papers.html" class="btn-hero-primary">Browse Papers →</a>
+        <a href="upload.html" class="btn-hero-ghost">↑ Upload a Paper</a>
       </div>
+
+      <div class="hero-stats">
+        <div>
+          <span class="hero-stat-val" id="statPapers">—</span>
+          <span class="hero-stat-lbl">Past Papers</span>
+        </div>
+        <div>
+          <span class="hero-stat-val" id="statSubjects">—</span>
+          <span class="hero-stat-lbl">Subjects</span>
+        </div>
+        <div>
+          <span class="hero-stat-val" id="statDepts">—</span>
+          <span class="hero-stat-lbl">Departments</span>
+        </div>
+        <div>
+          <span class="hero-stat-val" style="color:#a78bfa;">RAG</span>
+          <span class="hero-stat-lbl">AI Powered</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — AI demo -->
+    <div class="hero-right">
+      <div class="ai-demo">
+
+        <div class="ai-demo-header">
+          <div class="ai-demo-icon">🤖</div>
+          <div>
+            <div class="ai-demo-title">RAG STUDY ASSISTANT</div>
+            <div class="ai-demo-sub">Computer Networks · Semester 6</div>
+          </div>
+          <div class="ai-demo-badge">
+            <div class="live-dot"></div>
+            Live
+          </div>
+        </div>
+
+        <div class="ai-demo-body">
+          <div class="demo-msg demo-msg--user">
+            <div class="demo-bubble">Explain the difference between TCP and UDP</div>
+            <div class="demo-avatar">👤</div>
+          </div>
+          <div class="demo-msg demo-msg--ai">
+            <div class="demo-avatar">🤖</div>
+            <div class="demo-bubble">
+              <strong>TCP</strong> is connection-oriented — uses a 3-way handshake and guarantees delivery.
+              <strong>UDP</strong> is connectionless — faster but no delivery guarantee.
+              <br><br>Use TCP for email/web. UDP for streaming/gaming.
+            </div>
+          </div>
+          <div class="demo-msg demo-msg--user">
+            <div class="demo-bubble">Solve question 3 step by step</div>
+            <div class="demo-avatar">👤</div>
+          </div>
+          <div class="demo-msg demo-msg--ai">
+            <div class="demo-avatar">🤖</div>
+            <div class="demo-bubble">
+              <strong>Step 1:</strong> Identify the subnet mask → /26 = 255.255.255.192<br>
+              <strong>Step 2:</strong> Hosts per subnet = 2⁶ − 2 = <strong>62</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-demo-input">
+          <div class="demo-input-text">Ask anything about this paper…</div>
+          <div class="demo-send">↑</div>
+        </div>
+
+        <div class="demo-tags">
+          <div class="demo-tag">🤖 AI Paper Assistant</div>
+          <div class="demo-tag">⚡ Instant Answers</div>
+          <div class="demo-tag">📚 Past Paper Analysis</div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══ MARQUEE ═══ -->
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <div class="marquee-item">📚 Past Papers <span>Free</span></div>
+      <div class="marquee-item">🤖 RAG AI Assistant <span>Live</span></div>
+      <div class="marquee-item">⚡Fast Response <span></span></div>
+      <div class="marquee-item">🤖 AI Exam <span>Assistant</span></div>
+      <div class="marquee-item">⚡ Instant Answers <span></span></div>
+      <div class="marquee-item">🔍 Instant Search <span>Fast</span></div>
+      <div class="marquee-item">🏫 All Departments <span>GCU Lahore</span></div>
+      <div class="marquee-item">📱 Mobile Ready <span>Everywhere</span></div>
+
+     
+    </div>
+  </div>
+
+  <!-- ═══ STATS ═══ -->
+  <div class="stats-section">
+    <div class="container">
+      <div class="stats-row">
+        <div class="stat-block">
+          <span class="stat-block-num" id="s1">—</span>
+          <span class="stat-block-lbl">Past Papers</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-block-num" id="s2">—</span>
+          <span class="stat-block-lbl">Subjects</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-block-num" id="s3">—</span>
+          <span class="stat-block-lbl">Departments</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-block-num" style="color:#a78bfa;">RAG</span>
+          <span class="stat-block-lbl">AI Powered</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AI FEATURE SECTION ═══ -->
+  <section class="ai-section">
+    <div class="ai-section-inner">
+
+      <!-- LEFT — copy -->
+      <div>
+        <div class="ai-section-label">⚡ New Feature</div>
+        <h2 class="ai-section-h2">
+          Not Just Papers.<br>
+          <em>AI That Reads</em><br>
+          Them With You.
+        </h2>
+        <p class="ai-section-desc">
+          Our RAG AI assistant actually reads each paper before you ask.
+          Open any past paper — it indexes the PDF content instantly
+          and answers questions based on what's actually in the paper.
+        </p>
+        <div class="ai-features">
+          <div class="ai-feature-row">
+            <div class="ai-feature-icon">📄</div>
+            <div>
+              <h4>Reads scanned & image PDFs</h4>
+              <p>Gemini extracts text from both digital and scanned past papers — nothing is missed.</p>
+            </div>
+          </div>
+          <div class="ai-feature-row">
+            <div class="ai-feature-icon">🎯</div>
+            <div>
+              <h4>Answers based on actual paper content</h4>
+              <p>Qdrant vector search finds relevant context before answering — not just generic responses.</p>
+            </div>
+          </div>
+          <div class="ai-feature-row">
+            <div class="ai-feature-icon">⚡</div>
+            <div>
+              <h4>Streams word by word</h4>
+              <p>Groq LLM streams the answer in real time — no waiting for the full response.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT — pipeline -->
+      <div class="ai-pipeline">
+        <div class="pipeline-step">
+          <div class="pipe-num">1</div>
+          <div class="pipe-content">
+            <h4>Open any paper</h4>
+            <p>Click "Open" on any paper card — viewer loads with split screen PDF + AI chat.</p>
+          </div>
+          <div class="pipe-badge">Auto</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipe-num">2</div>
+          <div class="pipe-content">
+            <h4>Gemini reads the PDF</h4>
+            <p>Extracts all text including scanned pages and images — stored in Qdrant.</p>
+          </div>
+          <div class="pipe-badge">~5s</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipe-num">3</div>
+          <div class="pipe-content">
+            <h4>Ask your question</h4>
+            <p>Type any question from the paper — semantic search finds relevant context.</p>
+          </div>
+          <div class="pipe-badge">RAG</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipe-num">4</div>
+          <div class="pipe-content">
+            <h4>Get step-by-step answer</h4>
+            <p>Groq streams a detailed, exam-focused explanation in real time.</p>
+          </div>
+          <div class="pipe-badge">Live</div>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- STATS BAR -->
-  <div class="stats-bar">
+  <!-- ═══ FEATURES ═══ -->
+  <section class="features-section">
     <div class="container">
-      <div class="stats-grid">
-        <div class="stat-item">
-          <span class="stat-number" id="statPapers">—</span>
-          <span class="stat-label">Past Papers</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" id="statSubjects">—</span>
-          <span class="stat-label">Subjects</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" id="statDepts">—</span>
-          <span class="stat-label">Departments</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">Free</span>
-          <span class="stat-label">Always</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FEATURES -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
+      <div class="section-head">
         <span class="section-tag">Features</span>
         <h2>Everything You Need</h2>
-        <p>Built by a GCU student, for GCU students.</p>
+        <p>Built by a GCU student, for every GCU student.</p>
       </div>
       <div class="features-grid">
-        <div class="feature-card">
-          <span class="feature-icon">🔍</span>
+        <div class="feat-card">
+          <span class="feat-icon">🔍</span>
           <h3>Instant Search</h3>
           <p>Search any subject across all departments and semesters in real time. No loading, no waiting.</p>
         </div>
-        <div class="feature-card">
-          <span class="feature-icon">👁️</span>
-          <h3>View In Browser</h3>
-          <p>Preview any past paper directly in your browser without downloading anything first.</p>
+        <div class="feat-card">
+          <span class="feat-icon">🤖</span>
+          <h3>RAG AI Solver</h3>
+          <p>Split-screen viewer with AI that reads the paper and answers questions from its actual content.</p>
         </div>
-        <div class="feature-card">
-          <span class="feature-icon">⬇️</span>
+        <div class="feat-card">
+          <span class="feat-icon">⬇️</span>
           <h3>Free Download</h3>
-          <p>Download any paper as PDF instantly. No account required, no limits, completely free.</p>
+          <p>Download any paper instantly. No account required, no limits, always free.</p>
         </div>
-        <div class="feature-card">
-          <span class="feature-icon">⬆️</span>
+        <div class="feat-card">
+          <span class="feat-icon">⬆️</span>
           <h3>Student Uploads</h3>
-          <p>Sign in with Google and upload papers for your fellow students. Help others, build the community.</p>
+          <p>Sign in with Google and upload papers for your juniors. Build the community.</p>
         </div>
-        <div class="feature-card">
-          <span class="feature-icon">🏫</span>
+        <div class="feat-card">
+          <span class="feat-icon">🏫</span>
           <h3>All Departments</h3>
-          <p>BSCS, BSSE, BSIT, BSAI, Mathematics, Physics, Chemistry, Economics and more.</p>
+          <p>BSCS, BSSE, BSIT, BSAI, Math, Physics, Chemistry, Economics and more.</p>
         </div>
-        <div class="feature-card">
-          <span class="feature-icon">📱</span>
+        <div class="feat-card">
+          <span class="feat-icon">📱</span>
           <h3>Mobile Friendly</h3>
-          <p>Works perfectly on your phone. Study on the go, access papers anywhere, anytime.</p>
+          <p>Works on every device. Study on the go — access papers and AI chat anywhere.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- HOW IT WORKS -->
-  <section class="section" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <!-- ═══ TESTIMONIALS ═══ -->
+  <section class="testimonials-section">
     <div class="container">
-      <div class="section-header">
-        <span class="section-tag">How It Works</span>
-        <h2>Simple as 1, 2, 3</h2>
-        <p>Get the paper you need in under 30 seconds.</p>
-      </div>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <h4>Go to Papers</h4>
-          <p>Click Browse Papers and you'll see all available past papers.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <h4>Filter & Search</h4>
-          <p>Filter by department, semester, or search your subject by name.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <h4>View or Download</h4>
-          <p>Preview in browser or download the PDF directly to your device.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">4</div>
-          <h4>Give Back</h4>
-          <p>Sign in with Google and upload papers to help your fellow students.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TESTIMONIALS -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
+      <div class="section-head">
         <span class="section-tag">Students Say</span>
         <h2>Trusted by GCU Students</h2>
-        <p>Real feedback from real students who used this platform.</p>
+        <p>Real feedback from real students.</p>
       </div>
       <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <span class="quote-mark">"</span>
-          <div class="stars">★★★★★</div>
-          <p class="testimonial-text">Found my Database Systems final paper in 10 seconds. This site literally saved my exam preparation. Every BSCS student should know about this.</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">👨‍💻</div>
+        <div class="tcard">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-text">The AI actually explained question 2 from my networking paper step by step. I couldn't believe it read the whole paper. This is the future of studying.</p>
+          <div class="tcard-author">
+            <div class="tcard-avatar">👨‍💻</div>
             <div>
-              <span class="author-name">Ali Hassan</span>
-              <span class="author-dept">BSCS — Semester 4</span>
+              <span class="tcard-name">Ali Hassan</span>
+              <span class="tcard-dept">BSCS — Semester 6</span>
             </div>
           </div>
         </div>
-        <div class="testimonial-card">
-          <span class="quote-mark">"</span>
-          <div class="stars">★★★★★</div>
-          <p class="testimonial-text">I uploaded 6 papers from my old semesters and within a week my juniors were thanking me. Such a good initiative by a fellow student.</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">👩‍🎓</div>
+        <div class="tcard">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-text">I uploaded 6 papers from my old semesters and within a week my juniors were thanking me. Such a good initiative by a fellow GCU student.</p>
+          <div class="tcard-author">
+            <div class="tcard-avatar">👩‍🎓</div>
             <div>
-              <span class="author-name">Fatima Malik</span>
-              <span class="author-dept">BSSE — Semester 6</span>
+              <span class="tcard-name">Fatima Malik</span>
+              <span class="tcard-dept">BSSE — Semester 6</span>
             </div>
           </div>
         </div>
-        <div class="testimonial-card">
-          <span class="quote-mark">"</span>
-          <div class="stars">★★★★★</div>
-          <p class="testimonial-text">Clean, fast, and free. No annoying sign-up just to download. This is exactly what every university student needs. Bookmarked permanently.</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">👨‍🔬</div>
+        <div class="tcard">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-text">Clean, fast, and free. The RAG AI is genuinely useful — it doesn't just make up answers, it finds them in the actual paper. Bookmarked permanently.</p>
+          <div class="tcard-author">
+            <div class="tcard-avatar">👨‍🔬</div>
             <div>
-              <span class="author-name">Usman Tariq</span>
-              <span class="author-dept">BS Mathematics — Semester 5</span>
+              <span class="tcard-name">Usman Tariq</span>
+              <span class="tcard-dept">BS Mathematics — Semester 5</span>
             </div>
           </div>
         </div>
@@ -542,53 +1207,64 @@
     </div>
   </section>
 
-  <!-- CTA BANNER -->
-  <section class="section" style="padding-top: 0;">
+  <!-- ═══ CTA ═══ -->
+  <section class="cta-section">
     <div class="container">
-      <div class="cta-banner">
-        <h2>Have a Past Paper? Share It.</h2>
-        <p>Help hundreds of GCU students by uploading your old exam papers. It takes less than a minute.</p>
-        <div class="hero-actions">
-          <a href="papers.html" class="btn btn-primary">Browse Papers →</a>
-          <a href="contact.html" class="btn btn-ghost">Contact Us</a>
+      <div class="cta-wrap">
+        <h2>Ready to Study Smarter?</h2>
+        <p>Browse papers, open the AI viewer, and get instant step-by-step explanations — completely free.</p>
+        <div class="cta-btns">
+          <a href="papers.html" class="btn-hero-primary">Browse Papers →</a>
+          <a href="upload.html" class="btn-hero-ghost">↑ Contribute a Paper</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
-    <div class="footer-logo">📚 GCU Papers</div>
+    <div class="footer-logo">📚 GCU PAPERS</div>
     <p>Made with ❤️ for GCU Lahore students</p>
-    <p style="color: var(--muted); font-size: 13px;">
+    <p>
       <a href="index.html" style="color:var(--muted);">Home</a> ·
       <a href="papers.html" style="color:var(--muted);">Papers</a> ·
+      <a href="upload.html" style="color:var(--muted);">Upload</a> ·
       <a href="contact.html" style="color:var(--muted);">Contact</a>
     </p>
   </footer>
 
   <script src="config.js"></script>
+  <script src="auth.js"></script>
   <script>
-    // Theme toggle
+    // Theme
     function toggleTheme() {
       const isLight = document.body.classList.toggle("light");
       localStorage.setItem("theme", isLight ? "light" : "dark");
       document.getElementById("themeBtn").textContent = isLight ? "🌙" : "☀️";
     }
-    const saved = localStorage.getItem("theme");
-    if (saved === "light") {
+    if (localStorage.getItem("theme") === "light") {
       document.body.classList.add("light");
       document.getElementById("themeBtn").textContent = "🌙";
     }
 
-    // Load live stats from API
+    // Live stats
     async function loadStats() {
       try {
         const res  = await fetch(`${CONFIG.API_URL}/api/papers/`);
         const data = await res.json();
-        document.getElementById("statPapers").textContent   = data.length;
-        document.getElementById("statSubjects").textContent = new Set(data.map(p => p.subject)).size;
-        document.getElementById("statDepts").textContent    = new Set(data.map(p => p.department)).size;
+        const set  = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+        const papers   = data.length;
+        const subjects = new Set(data.map(p => p.subject)).size;
+        const depts    = new Set(data.map(p => p.department)).size;
+
+        // Update both hero and stats section
+        set("statPapers",   papers);
+        set("statSubjects", subjects);
+        set("statDepts",    depts);
+        set("s1", papers);
+        set("s2", subjects);
+        set("s3", depts);
       } catch { /* keep dashes */ }
     }
     loadStats();
