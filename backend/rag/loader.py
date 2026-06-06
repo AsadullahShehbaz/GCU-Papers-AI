@@ -3,7 +3,7 @@ import hashlib
 import tempfile
 import os  # <-- Added to cleanly manage temp files
 import httpx
-from langchain.schema import Document
+from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from google import genai
 from config import settings
